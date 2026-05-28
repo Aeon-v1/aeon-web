@@ -1,0 +1,58 @@
+"use client";
+
+import * as React from "react";
+import { motion } from "framer-motion";
+import { Editable, EditableButton } from "@/components/Editable";
+
+export interface HeroVariant1Props {
+  headline?: string;
+  subtext?: string;
+  ctaText?: string;
+}
+
+export function HeroVariant1({
+  headline = "Next Generation Platform",
+  subtext = "Build faster, scale better, and design flawlessly with our new decoupled architecture.",
+  ctaText = "Get Started",
+}: HeroVariant1Props) {
+  return (
+    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden bg-[#111110] font-sans text-[#EFEEEA] w-full">
+      {/* Background Orbs (Subtle) */}
+      <div className="absolute top-[-20%] left-[-10%] h-[50%] w-[50%] rounded-full bg-white/[0.02] blur-[120px]" />
+      <div className="absolute bottom-[-20%] right-[-10%] h-[50%] w-[50%] rounded-full bg-white/[0.01] blur-[120px]" />
+      
+      <div className="relative z-10 flex w-full max-w-7xl mx-auto px-4 md:px-6 flex-col items-center justify-center text-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 220, damping: 28 }}
+          className="space-y-6 max-w-3xl"
+        >
+          <Editable
+            as="h1"
+            defaultText={headline}
+            propName="headline"
+            className="text-5xl font-medium tracking-tighter sm:text-6xl md:text-7xl text-[#EFEEEA]"
+          />
+          <Editable
+            as="p"
+            defaultText={subtext}
+            propName="subtext"
+            className="text-lg md:text-xl text-[#D8D8D6] leading-relaxed max-w-2xl mx-auto font-light"
+          />
+          
+          <div className="pt-8">
+            <EditableButton 
+              as={motion.button}
+              whileHover={{ scale: 0.98 }}
+              whileTap={{ scale: 0.96 }}
+              className="rounded-full bg-[#EFEEEA] px-8 py-4 text-sm font-medium tracking-tight text-[#111110] transition-colors hover:bg-white border border-transparent shadow-sm cursor-pointer"
+            >
+              <Editable as="span" defaultText={ctaText} propName="ctaText" inline />
+            </EditableButton>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
