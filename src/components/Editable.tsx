@@ -39,8 +39,10 @@ export function Editable({
       elementRef.current.focus();
       
       // Move caret to the end of the text
-      const range = document.createRange();
-      const selection = window.getSelection();
+      const doc = elementRef.current.ownerDocument;
+      const win = doc.defaultView;
+      const range = doc.createRange();
+      const selection = win?.getSelection();
       range.selectNodeContents(elementRef.current);
       range.collapse(false); // false means collapse to end
       selection?.removeAllRanges();

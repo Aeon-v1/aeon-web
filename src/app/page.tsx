@@ -2,6 +2,7 @@
 
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { PropertiesPanel } from "@/components/PropertiesPanel";
+import { IframePreview } from "@/components/IframePreview";
 import { IconTray } from "@/components/IconTray";
 import { ChatSidebar } from "@/components/ChatSidebar";
 import { useEditor } from "@/components/EditorProvider";
@@ -27,8 +28,10 @@ export default function Home() {
       
       {/* Canvas Area Container */}
       <div className={`flex-1 relative bg-transparent ${isPreviewMode ? 'p-0' : 'p-[10px]'} flex flex-col min-w-0 transition-all duration-300 items-center justify-start`}>
-        <div className={`flex-1 overflow-y-auto relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full transition-all duration-300 ease-in-out ${getViewportWidthClass()} ${isPreviewMode ? '' : 'rounded-lg border border-black/[0.04] dark:border-white/[0.04] bg-background shadow-sm'}`}>
-          <BlockRenderer blocks={activeBlocks} />
+        <div className={`flex-1 overflow-hidden relative w-full transition-all duration-300 ease-in-out ${getViewportWidthClass()} ${isPreviewMode ? '' : 'rounded-lg border border-black/[0.04] dark:border-white/[0.04] bg-background shadow-sm'}`}>
+          <IframePreview>
+            <BlockRenderer blocks={activeBlocks} />
+          </IframePreview>
         </div>
         <IconTray />
       </div>

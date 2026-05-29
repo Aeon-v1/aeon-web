@@ -53,12 +53,15 @@ export interface EditorContextType {
   cycleAllVariants: () => void;
   viewportSize: "desktop" | "tablet" | "mobile";
   setViewportSize: (size: "desktop" | "tablet" | "mobile") => void;
+  iframeDoc: Document | null;
+  setIframeDoc: (doc: Document | null) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
 
 function BoundingBoxOverlay({ targetId, isHover = false }: { targetId: string | null, isHover?: boolean }) {
   const [rect, setRect] = React.useState<DOMRect | null>(null);
+  const { iframeDoc } = useEditor();
 
   React.useEffect(() => {
     if (!targetId) {
@@ -67,24 +70,50 @@ function BoundingBoxOverlay({ targetId, isHover = false }: { targetId: string | 
     }
 
     const timeout = setTimeout(() => {
-      const el = document.querySelector(`[data-editable-id="${targetId.replace(/"/g, '\\"')}"]`);
+      const doc = iframeDoc || document;
+      const el = doc.querySelector(`[data-editable-id="${targetId.replace(/"/g, '\\"')}"]`);
       if (!el) {
         setRect(null);
         return;
       }
 
-      const updateRect = () => setRect(el.getBoundingClientRect());
+      const updateRect = () => {
+        const elRect = el.getBoundingClientRect();
+        let topOffset = 0;
+        let leftOffset = 0;
+        
+        if (iframeDoc) {
+          const iframeEl = document.querySelector('iframe[title="Canvas Preview"]');
+          if (iframeEl) {
+            const iframeRect = iframeEl.getBoundingClientRect();
+            topOffset = iframeRect.top;
+            leftOffset = iframeRect.left;
+          }
+        }
+        
+        setRect({
+          top: elRect.top + topOffset,
+          left: elRect.left + leftOffset,
+          width: elRect.width,
+          height: elRect.height,
+        } as DOMRect);
+      };
+      
       updateRect();
 
       const observer = new ResizeObserver(updateRect);
       observer.observe(el);
+      
+      const win = doc.defaultView || window;
+      win.addEventListener("scroll", updateRect, true);
+      win.addEventListener("resize", updateRect);
       window.addEventListener("scroll", updateRect, true);
-      window.addEventListener("resize", updateRect);
 
       return () => {
         observer.disconnect();
+        win.removeEventListener("scroll", updateRect, true);
+        win.removeEventListener("resize", updateRect);
         window.removeEventListener("scroll", updateRect, true);
-        window.removeEventListener("resize", updateRect);
       };
     }, 0);
 
@@ -124,6 +153,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [viewportSize, setViewportSize] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [pages, setPages] = useState<PageData[]>([{ id: "home", name: "Home", blocks: MOCK_PAGE_DATA }]);
   const [activePageId, setActivePageId] = useState("home");
+  const [iframeDoc, setIframeDoc] = useState<Document | null>(null);
 
   const addPage = () => {
     const newId = `page-${pages.length + 1}`;
@@ -282,7 +312,8 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       isPreviewMode, setIsPreviewMode,
       viewportSize, setViewportSize,
       pages, activePageId, setActivePageId, addPage, updatePageName, updateBlockType,
-      cycleAllVariants
+      cycleAllVariants,
+      iframeDoc, setIframeDoc
     }}>
       {children}
       {!isPreviewMode && selectedId && <BoundingBoxOverlay targetId={selectedId} />}
