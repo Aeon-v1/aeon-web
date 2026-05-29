@@ -26,6 +26,14 @@ export function IframePreview({ children }: { children: React.ReactNode }) {
           doc.head.appendChild(style.cloneNode(true));
         });
         
+        // Hide scrollbar but keep scroll functionality
+        const scrollStyle = doc.createElement('style');
+        scrollStyle.innerHTML = `
+          ::-webkit-scrollbar { display: none !important; }
+          * { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+        `;
+        doc.head.appendChild(scrollStyle);
+
         doc.documentElement.className = document.documentElement.className;
       };
 

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { PromptBox } from "./ui/PromptBox";
 import { ChatMessageItem } from "./ChatMessageItem";
 import { useEditor } from "./EditorProvider";
+import AIThinkingBlock from "./ui/ai-thinking-block";
 
 export interface Message {
   id: string;
@@ -42,6 +43,8 @@ const INITIAL_MESSAGES: Message[] = [
 export function ChatSidebar() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [currentPrompt, setCurrentPrompt] = useState("");
   const { addGeneratedPage } = useEditor();
   const userName = "Builder";
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -66,12 +69,8 @@ export function ChatSidebar() {
 
     // ── Branch: Page Generation ──────────────────────────────────────────────
     if (isGenerateRequest(text)) {
-      // Show a "building" placeholder message
-      setMessages(prev => [...prev, {
-        id: assistantMsgId,
-        role: "assistant",
-        content: "⏳ Building your page — choosing the right blocks and writing the copy…",
-      }]);
+      setIsGenerating(true);
+      setCurrentPrompt(text);
 
       try {
         const res = await fetch("/api/generate", {
@@ -83,11 +82,11 @@ export function ChatSidebar() {
         const data = await res.json();
 
         if (!res.ok || data.error) {
-          setMessages(prev => prev.map(m =>
-            m.id === assistantMsgId
-              ? { ...m, content: `⚠️ ${data.error || "Failed to generate page."}` }
-              : m
-          ));
+          setMessages(prev => [...prev, { 
+            id: assistantMsgId, 
+            role: "assistant", 
+            content: `⚠️ ${data.error || "Failed to generate page."}` 
+          }]);
           return;
         }
 
@@ -95,19 +94,20 @@ export function ChatSidebar() {
         addGeneratedPage(pageName, data.blocks);
 
         const blockCount = data.blocks.length;
-        setMessages(prev => prev.map(m =>
-          m.id === assistantMsgId
-            ? { ...m, content: `✅ Done! I've built **${pageName}** with ${blockCount} blocks. It's now open as a new page tab in the canvas.` }
-            : m
-        ));
+        setMessages(prev => [...prev, { 
+          id: assistantMsgId, 
+          role: "assistant", 
+          content: `✅ Done! I've built **${pageName}** with ${blockCount} blocks. It's now open as a new page tab in the canvas.` 
+        }]);
       } catch (err) {
-        setMessages(prev => prev.map(m =>
-          m.id === assistantMsgId
-            ? { ...m, content: "⚠️ Failed to connect to the generation API. Check your API key." }
-            : m
-        ));
+        setMessages(prev => [...prev, { 
+          id: assistantMsgId, 
+          role: "assistant", 
+          content: "⚠️ Failed to connect to the generation API. Check your API key." 
+        }]);
       } finally {
         setIsLoading(false);
+        setIsGenerating(false);
       }
       return;
     }
@@ -207,8 +207,15 @@ export function ChatSidebar() {
                 <ChatMessageItem key={msg.id} msg={msg} />
               ))}
 
+              {/* Page Generation Thinking Block */}
+              {isLoading && isGenerating && (
+                 <div className="flex w-full animate-in fade-in duration-300 pb-8">
+                    <AIThinkingBlock prompt={currentPrompt} />
+                 </div>
+              )}
+
               {/* Thinking indicator — shows only while loading before first chunk arrives */}
-              {isLoading && messages[messages.length - 1]?.content === "" && (
+              {isLoading && !isGenerating && messages[messages.length - 1]?.content === "" && (
                 <div className="flex flex-col space-y-4 w-full">
                   <div className="flex items-start gap-2.5 w-full pr-6 pl-1 animate-in fade-in duration-300">
                     <div className="h-5 w-5 rounded-md flex items-center justify-center border shrink-0 bg-black/5 dark:bg-[#2C2C2A] border-black/[0.04] dark:border-white/[0.03]">
