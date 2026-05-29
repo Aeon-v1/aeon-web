@@ -3,14 +3,10 @@
 import React from "react";
 import { User, Sparkles } from "lucide-react";
 
-export interface Message {
-  id: string;
-  role: "user" | "ai";
-  content: string;
-}
+import { Message } from "ai/react";
 
 export function ChatMessageItem({ msg }: { msg: Message }) {
-  const isAi = msg.role === "ai";
+  const isAi = msg.role === "assistant" || msg.role === "ai";
 
   return (
     <div className={`flex w-full ${isAi ? "justify-start" : "justify-end"}`}>

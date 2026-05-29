@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PromptBox } from "./ui/PromptBox";
 import { ChatMessageItem, Message } from "./ChatMessageItem";
+import { useChat } from "ai/react";
 
 const INITIAL_MESSAGES: Message[] = [
   { id: "1", role: "user", content: "Build a sleek landing page for a headless rendering engine called Aeon Web." },
@@ -11,8 +12,10 @@ const INITIAL_MESSAGES: Message[] = [
 ];
 
 export function ChatSidebar() {
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
-  const [isAiResponding, setIsAiResponding] = useState(false);
+  const { messages, append, isLoading } = useChat({
+    api: '/api/chat',
+    initialMessages: INITIAL_MESSAGES as any[],
+  });
   const userName = "Builder";
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -22,25 +25,11 @@ export function ChatSidebar() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isAiResponding]);
+  }, [messages, isLoading]);
 
   const handleSendMessage = (text: string) => {
-    if (!text.trim() || isAiResponding) return;
-    
-    const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: text };
-    setMessages((prev) => [...prev, newUserMsg]);
-    setIsAiResponding(true);
-
-    // Mock AI response
-    setTimeout(() => {
-      setIsAiResponding(false);
-      const newAiMsg: Message = { 
-        id: (Date.now() + 1).toString(), 
-        role: "ai", 
-        content: "I've updated the layout based on your request. Let me know if you need any other changes." 
-      };
-      setMessages((prev) => [...prev, newAiMsg]);
-    }, 2500);
+    if (!text.trim() || isLoading) return;
+    append({ role: "user", content: text });
   };
 
   return (
@@ -95,7 +84,7 @@ export function ChatSidebar() {
               ))}
 
               {/* Thinking Cycles / Loader */}
-              {isAiResponding && (
+              {isLoading && messages[messages.length - 1]?.role === 'user' && (
                 <div className="flex flex-col space-y-4 w-full">
                    <div className="flex items-start gap-2.5 w-full pr-6 pl-1 animate-in fade-in duration-300">
                     <div className="h-5 w-5 rounded-md flex items-center justify-center border shrink-0 bg-black/5 dark:bg-[#2C2C2A] border-black/[0.04] dark:border-white/[0.03]">
