@@ -57,7 +57,7 @@ export function FAQVariant2({
           <Accordion
             type="single"
             collapsible
-            className="bg-card rounded-xl w-full border border-border px-8 py-3"
+            className="bg-card rounded-xl w-full border border-border px-4 md:px-8 py-3"
           >
             {faqs.map((item, i) => (
               <AccordionItem

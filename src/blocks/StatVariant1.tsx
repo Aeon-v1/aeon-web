@@ -28,7 +28,7 @@ export function StatVariant1({
   stats = defaultStats,
 }: StatVariant1Props) {
   return (
-    <EditableSection className="w-full py-24 md:py-32 bg-background text-foreground font-sans border-t border-border">
+    <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans border-t border-border">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-8 justify-between items-start">
           <motion.div
@@ -52,7 +52,7 @@ export function StatVariant1({
             />
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-x-12 gap-y-10 sm:grid-cols-2 md:gap-x-16 lg:gap-y-12 shrink-0">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:gap-y-10 md:gap-x-16 lg:gap-y-12 shrink-0">
             {stats.map((stat, i) => (
               <motion.div
                 key={i}

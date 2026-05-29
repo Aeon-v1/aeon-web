@@ -232,7 +232,7 @@ export function FAQVariant4({
       </div>
 
       {/* Layout */}
-      <div className="relative mx-auto max-w-5xl px-6 py-24">
+      <div className="relative mx-auto max-w-5xl px-6 py-16 md:py-24">
         {/* Header */}
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-6 gap-6">
           <div>

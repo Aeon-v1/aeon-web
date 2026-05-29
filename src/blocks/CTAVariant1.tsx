@@ -30,7 +30,7 @@ export function CTAVariant1({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ type: "spring", stiffness: 220, damping: 28 }}
-          className="relative overflow-hidden rounded-2xl border border-border bg-card px-8 py-16 md:px-16 md:py-20 flex flex-col items-center text-center gap-8"
+          className="relative overflow-hidden rounded-2xl border border-border bg-card px-6 py-12 md:px-16 md:py-20 flex flex-col items-center text-center gap-8"
         >
           {/* Subtle glow */}
           <div className="absolute inset-0 pointer-events-none">
@@ -58,7 +58,7 @@ export function CTAVariant1({
               href={primaryCtaHref}
               whileHover={{ scale: 0.98 }}
               whileTap={{ scale: 0.96 }}
-              className="group flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
+              className="group flex w-full sm:w-auto justify-center items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
             >
               <Editable as="span" defaultText={primaryCtaText} propName="primaryCtaText" inline />
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -68,7 +68,7 @@ export function CTAVariant1({
               href={secondaryCtaHref}
               whileHover={{ scale: 0.98 }}
               whileTap={{ scale: 0.96 }}
-              className="flex items-center gap-2 rounded-full border border-border bg-secondary px-8 py-3.5 text-sm font-medium tracking-tight text-secondary-foreground transition-colors hover:bg-secondary/80 cursor-pointer"
+              className="flex w-full sm:w-auto justify-center items-center gap-2 rounded-full border border-border bg-secondary px-8 py-3.5 text-sm font-medium tracking-tight text-secondary-foreground transition-colors hover:bg-secondary/80 cursor-pointer"
             >
               <Editable as="span" defaultText={secondaryCtaText} propName="secondaryCtaText" inline />
             </EditableButton>

@@ -48,7 +48,7 @@ export function NavbarVariant1({
             as={motion.button}
             whileHover={{ scale: 0.98 }}
             whileTap={{ scale: 0.96 }}
-            className="rounded-full bg-secondary hover:bg-secondary/80 border border-border px-4 py-2 text-xs font-medium tracking-tight text-secondary-foreground transition-colors cursor-pointer"
+            className="rounded-full bg-secondary hover:bg-secondary/80 border border-border px-4 py-2.5 md:py-2 text-sm md:text-xs font-medium tracking-tight text-secondary-foreground transition-colors cursor-pointer"
           >
             <Editable id={`${id}-cta-text`} as="span" defaultText={ctaText} propName="ctaText" inline />
           </EditableButton>

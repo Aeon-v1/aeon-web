@@ -61,10 +61,10 @@ export function CTAVariant2({
           />
         </div>
 
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <EditableButton
             id={`${id}-secondary-btn`}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-10 px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer text-foreground"
+            className="inline-flex w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-11 sm:h-10 px-6 sm:px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer text-foreground"
           >
             <Editable
               id={`${id}-secondary-btn-text`}
@@ -76,7 +76,7 @@ export function CTAVariant2({
           </EditableButton>
           <EditableButton
             id={`${id}-primary-btn`}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-10 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
+            className="inline-flex w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-11 sm:h-10 px-6 sm:px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
           >
             <Editable
               id={`${id}-primary-btn-text`}

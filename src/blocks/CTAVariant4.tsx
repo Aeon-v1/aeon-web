@@ -124,7 +124,7 @@ export function CTAVariant4({
   }, []);
 
   return (
-    <EditableSection id={id} as="section" className="min-h-[800px] bg-background text-foreground flex items-center justify-center px-6 py-12 overflow-hidden font-sans">
+    <EditableSection id={id} as="section" className="min-h-[600px] lg:min-h-[800px] bg-background text-foreground flex items-center justify-center px-6 py-12 overflow-hidden font-sans">
       <div className="w-full max-w-7xl animate-fade-in-up">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           {/* Left Content */}
@@ -176,13 +176,13 @@ export function CTAVariant4({
           </div>
 
           {/* Right Marquee */}
-          <div ref={marqueeRef} className="relative h-[600px] lg:h-[700px] flex items-center justify-center animate-fade-in-up [animation-delay:400ms]">
+          <div ref={marqueeRef} className="relative h-[400px] lg:h-[700px] flex items-center justify-center animate-fade-in-up [animation-delay:400ms]">
             <div className="relative w-full h-full">
               <VerticalMarquee speed={20} className="h-full">
                 {marqueeItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight py-8 marquee-item text-foreground"
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight py-4 sm:py-8 marquee-item text-foreground"
                   >
                     <Editable
                       id={`${id}-marquee-${idx}`}

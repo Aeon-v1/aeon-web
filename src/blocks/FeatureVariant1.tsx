@@ -57,7 +57,7 @@ export function FeatureVariant1({
   features = defaultFeatures,
 }: FeatureVariant1Props) {
   return (
-    <EditableSection className="w-full py-24 md:py-32 bg-background text-foreground font-sans">
+    <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}

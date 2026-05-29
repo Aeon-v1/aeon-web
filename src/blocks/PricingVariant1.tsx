@@ -58,7 +58,7 @@ export function PricingVariant1({
   plans = defaultPlans,
 }: PricingVariant1Props) {
   return (
-    <EditableSection className="w-full py-24 md:py-32 bg-background text-foreground transition-colors duration-300 font-sans">
+    <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground transition-colors duration-300 font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
@@ -83,7 +83,7 @@ export function PricingVariant1({
           </div>
         </motion.div>
         
-        <div className="mx-auto grid max-w-5xl items-stretch gap-6 py-16 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <div className="mx-auto grid max-w-5xl items-stretch gap-6 py-12 md:py-16 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
