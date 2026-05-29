@@ -3,7 +3,7 @@
 import React from "react";
 import { User, Sparkles } from "lucide-react";
 
-import { Message } from "ai/react";
+import { Message } from "@ai-sdk/react";
 
 export function ChatMessageItem({ msg }: { msg: Message }) {
   const isAi = msg.role === "assistant" || msg.role === "ai";

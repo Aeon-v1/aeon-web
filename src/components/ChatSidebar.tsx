@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PromptBox } from "./ui/PromptBox";
 import { ChatMessageItem, Message } from "./ChatMessageItem";
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
 
 const INITIAL_MESSAGES: Message[] = [
   { id: "1", role: "user", content: "Build a sleek landing page for a headless rendering engine called Aeon Web." },
