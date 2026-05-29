@@ -11,9 +11,10 @@ export function IframePreview({ children }: { children: React.ReactNode }) {
 
   const handleLoad = () => {
     const doc = iframeRef.current?.contentDocument;
-    if (doc) {
+    if (doc && doc.readyState === "complete") {
       setIframeDocument(doc);
       setIframeDoc(doc);
+
       
       const syncStyles = () => {
         const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'));
@@ -66,6 +67,12 @@ export function IframePreview({ children }: { children: React.ReactNode }) {
       return () => observer.disconnect();
     }
   };
+
+  useEffect(() => {
+    if (iframeRef.current?.contentDocument?.readyState === "complete") {
+      handleLoad();
+    }
+  }, []);
 
   return (
     <iframe

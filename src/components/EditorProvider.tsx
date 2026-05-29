@@ -50,6 +50,7 @@ export interface EditorContextType {
   addPage: () => void;
   updatePageName: (id: string, name: string) => void;
   updateBlockType: (pageId: string, blockIndex: number, newType: string) => void;
+  addGeneratedPage: (name: string, blocks: any[]) => void;
   cycleAllVariants: () => void;
   viewportSize: "desktop" | "tablet" | "mobile";
   setViewportSize: (size: "desktop" | "tablet" | "mobile") => void;
@@ -160,6 +161,12 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     setPages(prev => [...prev, { id: newId, name: `Page ${pages.length + 1}`, blocks: [] }]);
     setActivePageId(newId);
   };
+
+  const addGeneratedPage = React.useCallback((name: string, blocks: any[]) => {
+    const newId = `page-${Date.now()}`;
+    setPages(prev => [...prev, { id: newId, name, blocks }]);
+    setActivePageId(newId);
+  }, []);
 
   const updatePageName = (id: string, name: string) => {
     setPages(prev => prev.map(p => p.id === id ? { ...p, name: name.trim() === "" ? p.name : name } : p));
@@ -312,6 +319,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       isPreviewMode, setIsPreviewMode,
       viewportSize, setViewportSize,
       pages, activePageId, setActivePageId, addPage, updatePageName, updateBlockType,
+      addGeneratedPage,
       cycleAllVariants,
       iframeDoc, setIframeDoc
     }}>

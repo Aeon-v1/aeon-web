@@ -4,11 +4,34 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PromptBox } from "./ui/PromptBox";
 import { ChatMessageItem } from "./ChatMessageItem";
+import { useEditor } from "./EditorProvider";
 
 export interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+}
+
+// Keywords that indicate the user wants to generate a page
+const GENERATE_KEYWORDS = [
+  "build", "create", "make", "generate", "design", "compose",
+  "give me a", "build me", "create a", "make a", "make me",
+  "landing page", "homepage", "website", "web page", "page for",
+];
+
+function isGenerateRequest(text: string): boolean {
+  const lower = text.toLowerCase();
+  return GENERATE_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+// Derive a short page name from the user's prompt
+function derivePageName(prompt: string): string {
+  const lower = prompt.toLowerCase();
+  // Try to extract "for X" pattern
+  const forMatch = lower.match(/for\s+([a-z0-9\s]{2,30}?)(?:\s*[-–,.]|$)/i);
+  if (forMatch) return forMatch[1].trim().replace(/\b\w/g, c => c.toUpperCase());
+  // Fallback: first 4 words
+  return prompt.split(/\s+/).slice(0, 4).join(" ");
 }
 
 const INITIAL_MESSAGES: Message[] = [
@@ -19,6 +42,7 @@ const INITIAL_MESSAGES: Message[] = [
 export function ChatSidebar() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [isLoading, setIsLoading] = useState(false);
+  const { addGeneratedPage } = useEditor();
   const userName = "Builder";
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -40,6 +64,55 @@ export function ChatSidebar() {
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
 
+    // ── Branch: Page Generation ──────────────────────────────────────────────
+    if (isGenerateRequest(text)) {
+      // Show a "building" placeholder message
+      setMessages(prev => [...prev, {
+        id: assistantMsgId,
+        role: "assistant",
+        content: "⏳ Building your page — choosing the right blocks and writing the copy…",
+      }]);
+
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: text }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          setMessages(prev => prev.map(m =>
+            m.id === assistantMsgId
+              ? { ...m, content: `⚠️ ${data.error || "Failed to generate page."}` }
+              : m
+          ));
+          return;
+        }
+
+        const pageName = derivePageName(text);
+        addGeneratedPage(pageName, data.blocks);
+
+        const blockCount = data.blocks.length;
+        setMessages(prev => prev.map(m =>
+          m.id === assistantMsgId
+            ? { ...m, content: `✅ Done! I've built **${pageName}** with ${blockCount} blocks. It's now open as a new page tab in the canvas.` }
+            : m
+        ));
+      } catch (err) {
+        setMessages(prev => prev.map(m =>
+          m.id === assistantMsgId
+            ? { ...m, content: "⚠️ Failed to connect to the generation API. Check your API key." }
+            : m
+        ));
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    // ── Branch: Conversational Chat ──────────────────────────────────────────
     const chatHistory = [...messages, userMsg].map(({ role, content }) => ({ role, content }));
 
     // Create a placeholder assistant message to stream into
@@ -70,6 +143,7 @@ export function ChatSidebar() {
         setMessages(prev => prev.map(m =>
           m.id === assistantMsgId ? { ...m, content: m.content + chunk } : m
         ));
+
       }
     } catch (error: any) {
       if (error.name !== "AbortError") {
