@@ -1,23 +1,27 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PromptBox } from "./ui/PromptBox";
-import { ChatMessageItem, Message } from "./ChatMessageItem";
-import { useChat } from "@ai-sdk/react";
+import { ChatMessageItem } from "./ChatMessageItem";
+
+export interface Message {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+}
 
 const INITIAL_MESSAGES: Message[] = [
   { id: "1", role: "user", content: "Build a sleek landing page for a headless rendering engine called Aeon Web." },
-  { id: "2", role: "ai", content: "I've generated a complete landing page for Aeon Web. It includes a Hero section, Logo cloud, Features grid, How it Works steps, Pricing, and Testimonials." },
+  { id: "2", role: "assistant", content: "I've generated a complete landing page for Aeon Web. It includes a Hero section, Logo cloud, Features grid, How it Works steps, Pricing, and Testimonials." },
 ];
 
 export function ChatSidebar() {
-  const { messages, append, isLoading } = useChat({
-    api: '/api/chat',
-    initialMessages: INITIAL_MESSAGES as any[],
-  });
+  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [isLoading, setIsLoading] = useState(false);
   const userName = "Builder";
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,10 +31,56 @@ export function ChatSidebar() {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isLoading) return;
-    append({ role: "user", content: text });
-  };
+
+    const userMsg: Message = { id: Date.now().toString(), role: "user", content: text };
+    const assistantMsgId = (Date.now() + 1).toString();
+
+    setMessages(prev => [...prev, userMsg]);
+    setIsLoading(true);
+
+    const chatHistory = [...messages, userMsg].map(({ role, content }) => ({ role, content }));
+
+    // Create a placeholder assistant message to stream into
+    setMessages(prev => [...prev, { id: assistantMsgId, role: "assistant", content: "" }]);
+
+    try {
+      abortControllerRef.current = new AbortController();
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: chatHistory }),
+        signal: abortControllerRef.current.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        const err = await response.json().catch(() => ({ error: "Unknown error" }));
+        setMessages(prev => prev.map(m => m.id === assistantMsgId ? { ...m, content: `⚠️ ${err.error || "Failed to get a response."}` } : m));
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        setMessages(prev => prev.map(m =>
+          m.id === assistantMsgId ? { ...m, content: m.content + chunk } : m
+        ));
+      }
+    } catch (error: any) {
+      if (error.name !== "AbortError") {
+        setMessages(prev => prev.map(m =>
+          m.id === assistantMsgId ? { ...m, content: "⚠️ Failed to connect to AI. Please check your API key." } : m
+        ));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, messages]);
 
   return (
     <div className="flex flex-col h-full bg-[#FDFDFC] dark:bg-[#1F1F1E] w-full lg:w-[25%] relative shrink-0 z-40 pointer-events-auto transition-colors duration-300">
@@ -56,12 +106,12 @@ export function ChatSidebar() {
                 </h2>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 layoutId="prompt-box-container"
                 className="w-full"
                 transition={{ type: "spring", stiffness: 220, damping: 28 }}
               >
-                <PromptBox 
+                <PromptBox
                   onSendMessage={handleSendMessage}
                   placeholder="Ask Aeon Builder to add a hero section, modify colors, or add a pricing table..."
                   className="transition-all duration-300 shadow-none focus-within:ring-1 focus-within:ring-white/5 border border-white/[0.05]"
@@ -83,19 +133,18 @@ export function ChatSidebar() {
                 <ChatMessageItem key={msg.id} msg={msg} />
               ))}
 
-              {/* Thinking Cycles / Loader */}
-              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+              {/* Thinking indicator — shows only while loading before first chunk arrives */}
+              {isLoading && messages[messages.length - 1]?.content === "" && (
                 <div className="flex flex-col space-y-4 w-full">
-                   <div className="flex items-start gap-2.5 w-full pr-6 pl-1 animate-in fade-in duration-300">
+                  <div className="flex items-start gap-2.5 w-full pr-6 pl-1 animate-in fade-in duration-300">
                     <div className="h-5 w-5 rounded-md flex items-center justify-center border shrink-0 bg-black/5 dark:bg-[#2C2C2A] border-black/[0.04] dark:border-white/[0.03]">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neutral-400 dark:bg-neutral-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-neutral-500 dark:bg-neutral-500"></span>
                       </span>
                     </div>
-                    
                     <div className="px-4 py-2 rounded-2xl text-xs md:text-sm font-sans flex items-center gap-1.5 shadow-sm bg-white dark:bg-[#181817] border border-black/[0.04] dark:border-white/[0.03] text-neutral-500 dark:text-neutral-400 transition-colors duration-300">
-                      <span>Generating Web Blocks</span>
+                      <span>Generating response</span>
                       <span className="flex items-center gap-0.5 ml-0.5 mt-1">
                         <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:-0.3s]" />
                         <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:-0.15s]" />

@@ -35,7 +35,7 @@ Your goal is to answer their questions, suggest improvements, and write copy.
 Keep your responses concise, helpful, and friendly.`,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Error calling AI API:", error);
     return new Response(JSON.stringify({ error: "Failed to generate response from AI API." }), {
