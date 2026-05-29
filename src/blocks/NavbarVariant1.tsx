@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { Editable, EditableButton, EditableSection } from "@/components/Editable";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export interface NavbarVariant1Props {
   id?: string;
@@ -42,7 +43,8 @@ export function NavbarVariant1({
           <Editable id={`${id}-link3`} as="a" defaultText={link3} propName="link3" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer" inline />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
+          <ThemeToggle />
           <EditableButton
             id={`${id}-cta`}
             as={motion.button}

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/liquid-glass-button'
 import React from 'react'
 import { cn } from '@/lib/utils' 
 import { Editable, EditableButton, EditableSection } from "@/components/Editable";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export interface NavbarVariant3Props {
   id?: string;
@@ -97,6 +98,7 @@ export function NavbarVariant3({
                                     className={cn(isScrolled && 'lg:hidden', 'cursor-pointer')}>
                                     <span className="bg-primary text-primary-foreground hover:bg-primary/90">Sign Up</span>
                                 </Button>
+                                <ThemeToggle />
                                 <EditableButton
                                     id={`${id}-cta`}
                                     as={Button}

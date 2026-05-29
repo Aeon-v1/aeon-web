@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Editable, EditableButton, EditableSection } from "@/components/Editable";
+import { Editable, EditableButton, EditableSection, EditableImage } from "@/components/Editable";
 
 export interface HeroVariant1Props {
   headline?: string;
@@ -16,12 +16,12 @@ export function HeroVariant1({
   ctaText = "Get Started",
 }: HeroVariant1Props) {
   return (
-    <EditableSection className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden bg-background font-sans text-foreground w-full">
+    <EditableSection className="relative flex min-h-[70vh] flex-col items-center pt-24 pb-16 overflow-hidden bg-background font-sans text-foreground w-full">
       {/* Background Orbs (Subtle) */}
       <div className="absolute top-[-20%] left-[-10%] h-[50%] w-[50%] rounded-full bg-foreground/[0.02] blur-[120px]" />
       <div className="absolute bottom-[-20%] right-[-10%] h-[50%] w-[50%] rounded-full bg-foreground/[0.01] blur-[120px]" />
       
-      <div className="relative z-10 flex w-full max-w-7xl mx-auto px-4 md:px-6 flex-col items-center justify-center text-center">
+      <div className="relative z-10 flex w-full max-w-7xl mx-auto px-4 md:px-6 flex-col items-center text-center">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -51,6 +51,19 @@ export function HeroVariant1({
               <Editable as="span" defaultText={ctaText} propName="ctaText" inline />
             </EditableButton>
           </div>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 220, damping: 28, delay: 0.2 }}
+          className="mt-16 w-full max-w-5xl mx-auto rounded-xl border border-border/50 bg-background/50 p-2 backdrop-blur-sm"
+        >
+          <EditableImage 
+            className="w-full h-auto aspect-video rounded-lg object-cover bg-muted"
+            fallbackQuery="dashboard UI software startup dark mode"
+            alt="Hero Dashboard"
+          />
         </motion.div>
       </div>
     </EditableSection>

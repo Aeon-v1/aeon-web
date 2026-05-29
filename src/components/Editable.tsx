@@ -159,7 +159,7 @@ export function EditableButton({
   id: explicitId,
   ...props
 }: EditableButtonProps) {
-  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode } = useEditor();
+  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode, canvasTheme } = useEditor();
   const generatedId = useId(); 
   const id = explicitId ?? generatedId; 
   
@@ -198,11 +198,20 @@ export function EditableButton({
   if (overrides.boxShadow) dynamicStyles.boxShadow = overrides.boxShadow;
 
   const currentHref = overrides.href ?? href;
+  
+  let finalClassName = className;
+  if (overrides.invert) {
+    if (canvasTheme === "light") {
+      finalClassName += " dark";
+    } else {
+      finalClassName += " light";
+    }
+  }
 
   return (
     <Component
       ref={elementRef}
-      className={className}
+      className={finalClassName}
       style={dynamicStyles}
       data-editable="true"
       data-editable-id={id}
@@ -230,7 +239,7 @@ export function EditableSection({
   id: explicitId,
   ...props
 }: EditableSectionProps) {
-  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode } = useEditor();
+  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode, canvasTheme } = useEditor();
   const generatedId = useId(); 
   const id = explicitId ?? generatedId; 
   
@@ -267,10 +276,19 @@ export function EditableSection({
   if (overrides.paddingTop !== undefined) dynamicStyles.paddingTop = `${overrides.paddingTop}px`;
   if (overrides.paddingBottom !== undefined) dynamicStyles.paddingBottom = `${overrides.paddingBottom}px`;
 
+  let finalClassName = className;
+  if (overrides.invert) {
+    if (canvasTheme === "light") {
+      finalClassName += " dark";
+    } else {
+      finalClassName += " light";
+    }
+  }
+
   return (
     <Component
       ref={elementRef}
-      className={className}
+      className={finalClassName}
       style={dynamicStyles}
       data-editable="true"
       data-editable-id={id}
@@ -281,5 +299,87 @@ export function EditableSection({
     >
       {children}
     </Component>
+  );
+}
+
+export interface EditableImageProps extends React.HTMLAttributes<HTMLImageElement> {
+  src?: string;
+  alt?: string;
+  fallbackQuery?: string;
+  id?: string;
+}
+
+export function EditableImage({
+  src,
+  alt = "Image",
+  fallbackQuery,
+  className = "",
+  id: explicitId,
+  ...props
+}: EditableImageProps) {
+  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode } = useEditor();
+  const generatedId = useId(); 
+  const id = explicitId ?? generatedId; 
+  
+  const isSelected = selectedId === id;
+  const overrides = elementOverrides[id] || {};
+  const elementRef = useRef<HTMLImageElement>(null);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    if (!isSelected) {
+      setSelectedId(id);
+      setEditingId(null);
+    }
+  };
+
+  const handleMouseOver = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    setHoveredId(id);
+  };
+
+  const handleMouseOut = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    setHoveredId(null);
+  };
+
+  const dynamicStyles: React.CSSProperties = {
+    ...props.style,
+  };
+  
+  if (overrides.borderRadius !== undefined) dynamicStyles.borderRadius = `${overrides.borderRadius}px`;
+  if (overrides.boxShadow) dynamicStyles.boxShadow = overrides.boxShadow;
+  if (overrides.opacity !== undefined) dynamicStyles.opacity = overrides.opacity;
+
+  let finalClassName = className;
+  if (isSelected) {
+    finalClassName += " ring-2 ring-primary ring-offset-2";
+  }
+
+  // Determine the final source
+  let finalSrc = overrides.src ?? src;
+  if (!finalSrc && fallbackQuery) {
+    finalSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackQuery)}?width=800&height=600&nologo=true`;
+  }
+  
+  const finalAlt = overrides.alt ?? alt;
+
+  return (
+    <img
+      ref={elementRef}
+      className={finalClassName}
+      style={dynamicStyles}
+      data-editable="true"
+      data-editable-id={id}
+      onClick={handleClick}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      src={finalSrc}
+      alt={finalAlt}
+      {...props}
+    />
   );
 }

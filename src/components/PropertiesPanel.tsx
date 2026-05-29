@@ -41,7 +41,7 @@ function Section({ title, defaultOpen = true, children, hasInfo = false }: { tit
     <div className="border-b border-black/[0.04] dark:border-white/[0.04]">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-3 px-4 text-xs font-medium text-black dark:text-[#EFEEEA] hover:bg-black/[0.04] dark:hover:bg-white/[0.02] transition-colors"
+        className="w-full flex items-center justify-between py-3 px-4 text-[13px] font-medium text-black dark:text-[#EFEEEA] hover:bg-black/[0.04] dark:hover:bg-white/[0.02] transition-colors"
       >
         <div className="flex items-center gap-1.5">
           {title}
@@ -60,7 +60,7 @@ function Section({ title, defaultOpen = true, children, hasInfo = false }: { tit
 function Row({ label, children, labelWidth = "w-[72px]" }: { label: React.ReactNode, children: React.ReactNode, labelWidth?: string }) {
   return (
     <div className="flex items-center gap-2 min-h-[32px]">
-      <div className={`shrink-0 text-xs text-gray-600 dark:text-[#D8D8D6]/70 flex items-center gap-1.5 ${labelWidth}`}>
+      <div className={`shrink-0 text-[13px] text-gray-600 dark:text-[#D8D8D6]/70 flex items-center gap-1.5 ${labelWidth}`}>
         {label}
       </div>
       <div className="flex-1 flex items-center min-w-0">
@@ -70,14 +70,15 @@ function Row({ label, children, labelWidth = "w-[72px]" }: { label: React.ReactN
   );
 }
 
-function Input({ value, onChange, type = "text", className = "", postfix }: { value: string, onChange?: (val: string) => void, type?: string, className?: string, postfix?: React.ReactNode }) {
+function Input({ value, onChange, type = "text", className = "", postfix, onKeyDown }: { value: string, onChange?: (val: string) => void, type?: string, className?: string, postfix?: React.ReactNode, onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void }) {
   return (
     <div className="relative w-full flex items-center">
       <input 
         type={type} 
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
-        className={`w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-xs text-black dark:text-[#EFEEEA] placeholder:text-gray-600 dark:text-[#D8D8D6]/40 focus:outline-none focus:border-black/[0.2] dark:focus:border-white/[0.2] transition-colors ${className}`}
+        onKeyDown={onKeyDown}
+        className={`w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] placeholder:text-gray-600 dark:text-[#D8D8D6]/40 focus:outline-none focus:border-black/[0.2] dark:focus:border-white/[0.2] transition-colors ${className}`}
       />
       {postfix && (
         <div className="absolute right-1 top-1 bottom-1 flex items-center bg-[#FDFDFC] dark:bg-[#111110] rounded-[4px] border border-black/[0.04] dark:border-white/[0.04] px-1.5 text-[10px] text-gray-600 dark:text-[#D8D8D6] cursor-pointer hover:bg-black/[0.04] dark:hover:bg-white/[0.04]">
@@ -123,7 +124,7 @@ function ColorInput({ value, onChange }: { value: string, onChange?: (val: strin
         type="text" 
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
-        className={`w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md pl-7 pr-2.5 py-1.5 text-xs text-black dark:text-[#EFEEEA] placeholder:text-gray-600 dark:text-[#D8D8D6]/40 focus:outline-none focus:border-black/[0.2] dark:focus:border-white/[0.2] transition-colors`}
+        className={`w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md pl-7 pr-2.5 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] placeholder:text-gray-600 dark:text-[#D8D8D6]/40 focus:outline-none focus:border-black/[0.2] dark:focus:border-white/[0.2] transition-colors`}
       />
     </div>
   );
@@ -131,7 +132,7 @@ function ColorInput({ value, onChange }: { value: string, onChange?: (val: strin
 
 function Dropdown({ value, placeholder, icon }: { value?: string, placeholder?: string, icon?: React.ReactNode }) {
   return (
-    <button className="w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-xs text-black dark:text-[#EFEEEA] flex items-center justify-between hover:border-black/[0.1] dark:hover:border-white/[0.1] transition-colors">
+    <button className="w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] flex items-center justify-between hover:border-black/[0.1] dark:hover:border-white/[0.1] transition-colors">
       <div className="flex items-center gap-2 truncate">
         {icon && <span className="text-gray-600 dark:text-[#D8D8D6]/50">{icon}</span>}
         <span className={value ? "text-black dark:text-[#EFEEEA]" : "text-gray-600 dark:text-[#D8D8D6]/40"}>{value || placeholder}</span>
@@ -151,7 +152,7 @@ function FontDropdown({ value, onChange }: { value?: string, onChange: (font: st
     <div className="relative w-full">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-xs text-black dark:text-[#EFEEEA] flex items-center justify-between hover:border-black/[0.1] dark:hover:border-white/[0.1] transition-colors"
+        className="w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] flex items-center justify-between hover:border-black/[0.1] dark:hover:border-white/[0.1] transition-colors"
       >
         <span className="truncate">{value || "Default"}</span>
         <svg className="w-3 h-3 text-gray-600 dark:text-[#D8D8D6]/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -165,7 +166,7 @@ function FontDropdown({ value, onChange }: { value?: string, onChange: (font: st
               placeholder="Search font..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-black/[0.02] dark:bg-white/[0.02] rounded px-2 py-1.5 text-xs text-black dark:text-[#EFEEEA] outline-none placeholder:text-gray-500"
+              className="w-full bg-black/[0.02] dark:bg-white/[0.02] rounded px-2 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] outline-none placeholder:text-gray-500"
               autoFocus
             />
           </div>
@@ -177,14 +178,14 @@ function FontDropdown({ value, onChange }: { value?: string, onChange: (font: st
                   onChange(font);
                   setIsOpen(false);
                 }}
-                className="w-full text-left px-3 py-1.5 text-xs text-black dark:text-[#EFEEEA] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
+                className="w-full text-left px-3 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]"
                 style={{ fontFamily: font }}
               >
                 {font}
               </button>
             ))}
             {filteredFonts.length === 0 && (
-              <div className="px-3 py-2 text-xs text-gray-500">No fonts found</div>
+              <div className="px-3 py-2 text-[13px] text-gray-500">No fonts found</div>
             )}
           </div>
         </div>
@@ -200,7 +201,7 @@ function ToggleGroup({ options, activeIndex, onChange }: { options: React.ReactN
         <button
           key={i}
           onClick={() => onChange?.(i)}
-          className={`flex-1 flex items-center justify-center py-1 px-2 text-xs rounded-[4px] transition-colors ${
+          className={`flex-1 flex items-center justify-center py-1 px-2 text-[13px] rounded-[4px] transition-colors ${
             i === activeIndex 
               ? "bg-[#FDFDFC] dark:bg-[#111110] text-black dark:text-[#EFEEEA] shadow-[0_1px_2px_rgba(0,0,0,0.5)] border border-black/[0.04] dark:border-white/[0.04]" 
               : "text-gray-600 dark:text-[#D8D8D6]/60 hover:text-black dark:text-[#EFEEEA]"
@@ -228,7 +229,7 @@ function TreeItem({ icon, label, level = 0, active = false, collapsible = false,
   return (
     <button 
       onClick={onClick}
-      className={`w-full flex items-center gap-1.5 py-1.5 px-3 text-xs transition-colors hover:bg-black/[0.04] dark:hover:bg-white/[0.04] ${active ? "bg-white dark:bg-[#1c1c1a] text-black dark:text-[#EFEEEA]" : "text-gray-600 dark:text-[#D8D8D6]"}`}
+      className={`w-full flex items-center gap-1.5 py-1.5 px-3 text-[13px] transition-colors hover:bg-black/[0.04] dark:hover:bg-white/[0.04] ${active ? "bg-white dark:bg-[#1c1c1a] text-black dark:text-[#EFEEEA]" : "text-gray-600 dark:text-[#D8D8D6]"}`}
       style={{ paddingLeft: `${(level * 16) + 12}px` }}
     >
       <div className="w-3 h-3 flex items-center justify-center shrink-0 -ml-1">
@@ -261,7 +262,7 @@ function PagesView() {
 
   return (
     <div className="py-3">
-      <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-sm font-medium mb-1">
+      <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-[15px] font-medium mb-1">
         <span>Pages</span>
         <button 
           onClick={handleAddPage}
@@ -278,7 +279,7 @@ function PagesView() {
               <FileText className="w-3.5 h-3.5 text-gray-600 dark:text-[#D8D8D6]/80 shrink-0" />
               <input 
                 autoFocus
-                className="w-full bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 rounded px-1.5 py-0.5 text-xs text-black dark:text-[#EFEEEA] outline-none"
+                className="w-full bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 rounded px-1.5 py-0.5 text-[13px] text-black dark:text-[#EFEEEA] outline-none"
                 defaultValue={page.name}
                 onBlur={(e) => handleNameChange(page.id, e.target.value)}
                 onKeyDown={(e) => {
@@ -309,7 +310,7 @@ function BlocksView() {
 
   return (
     <div className="py-3">
-      <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-sm font-medium border-b border-black/[0.04] dark:border-white/[0.04] mb-2">
+      <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-[15px] font-medium border-b border-black/[0.04] dark:border-white/[0.04] mb-2">
         <span>Blocks</span>
       </div>
       
@@ -333,7 +334,7 @@ function BlocksView() {
                 <div className="text-gray-600 dark:text-[#D8D8D6]/80 shrink-0 flex items-center justify-center">
                   <Component className="w-3.5 h-3.5 text-purple-400" />
                 </div>
-                <span className="text-xs text-gray-600 dark:text-[#D8D8D6] truncate flex-1">{baseName}</span>
+                <span className="text-[13px] text-gray-600 dark:text-[#D8D8D6] truncate flex-1">{baseName}</span>
               </div>
               
               {maxVariants > 1 && (
@@ -360,16 +361,181 @@ function BlocksView() {
   );
 }
 
+function GlobalView() {
+  const { globalTheme, setGlobalTheme } = useEditor();
+
+  const handleUpdate = (updates: Partial<typeof globalTheme>) => {
+    setGlobalTheme(prev => ({ ...prev, ...updates }));
+  };
+
+  return (
+    <div className="py-3">
+      <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-[15px] font-medium border-b border-black/[0.04] dark:border-white/[0.04] mb-2">
+        <span>Global Theme</span>
+      </div>
+      
+      <Section title="Typography">
+        <Row label="Heading">
+          <FontDropdown 
+            value={globalTheme.headingFont ?? ""} 
+            onChange={(font) => handleUpdate({ headingFont: font })} 
+          />
+        </Row>
+        <Row label="Body">
+          <FontDropdown 
+            value={globalTheme.bodyFont ?? ""} 
+            onChange={(font) => handleUpdate({ bodyFont: font })} 
+          />
+        </Row>
+      </Section>
+
+      <Section title="Colors">
+        <Row label="Primary">
+          <ColorInput 
+            value={globalTheme.primaryColor ?? ""} 
+            onChange={(val) => handleUpdate({ primaryColor: val })} 
+          />
+        </Row>
+        <Row label="Secondary">
+          <ColorInput 
+            value={globalTheme.secondaryColor ?? ""} 
+            onChange={(val) => handleUpdate({ secondaryColor: val })} 
+          />
+        </Row>
+        <Row label="Accent">
+          <ColorInput 
+            value={globalTheme.accentColor ?? ""} 
+            onChange={(val) => handleUpdate({ accentColor: val })} 
+          />
+        </Row>
+      </Section>
+    </div>
+  );
+}
+
+function ImageManager({ overrides, handleUpdate }: { overrides: Partial<TextProperties>, handleUpdate: (updates: Partial<TextProperties>) => void }) {
+  const [mode, setMode] = useState<"upload" | "unsplash">("upload");
+  const [isUploading, setIsUploading] = useState(false);
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [unsplashResults, setUnsplashResults] = useState<any[]>([]);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "");
+    
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      if (data.secure_url) {
+        handleUpdate({ src: data.secure_url });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(searchQuery)}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&per_page=12`);
+        const data = await res.json();
+        setUnsplashResults(data.results || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearching(false);
+      }
+    }
+  };
+
+  return (
+    <Section title="Image Management">
+      <div className="flex flex-col gap-3 w-full">
+        <ToggleGroup 
+          options={["Upload", "Unsplash"]} 
+          activeIndex={mode === "upload" ? 0 : 1} 
+          onChange={(i) => setMode(i === 0 ? "upload" : "unsplash")} 
+        />
+        
+        {mode === "upload" && (
+          <div className="flex flex-col gap-2">
+            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-black/[0.1] dark:border-white/[0.1] rounded-lg cursor-pointer hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+              {isUploading ? (
+                <span className="text-[13px] text-gray-500">Uploading...</span>
+              ) : (
+                <>
+                  <Plus className="w-5 h-5 text-gray-400 mb-1" />
+                  <span className="text-[13px] text-gray-500">Click to upload</span>
+                </>
+              )}
+              <input type="file" className="hidden" accept="image/*" onChange={handleUpload} disabled={isUploading} />
+            </label>
+            <Input 
+              value={overrides.alt ?? ""} 
+              onChange={(val) => handleUpdate({ alt: val })} 
+              placeholder="Alt Text (Optional)"
+            />
+          </div>
+        )}
+
+        {mode === "unsplash" && (
+          <div className="flex flex-col gap-3">
+            <Input 
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onKeyDown={handleSearch}
+              placeholder="Search & hit Enter..."
+            />
+            {isSearching && <div className="text-[13px] text-gray-500 text-center py-4">Searching...</div>}
+            {!isSearching && unsplashResults.length > 0 && (
+              <div className="grid grid-cols-2 gap-1.5 max-h-[240px] overflow-y-auto custom-scrollbar pr-1">
+                {unsplashResults.map(img => (
+                  <button
+                    key={img.id}
+                    onClick={() => handleUpdate({ src: img.urls.regular, alt: img.alt_description })}
+                    className="relative aspect-video rounded overflow-hidden group border border-black/10 dark:border-white/10"
+                  >
+                    <img src={img.urls.small} alt={img.alt_description || ""} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  </button>
+                ))}
+              </div>
+            )}
+            {!isSearching && unsplashResults.length === 0 && searchQuery && (
+              <div className="text-[13px] text-gray-500 text-center py-4">No results found</div>
+            )}
+          </div>
+        )}
+      </div>
+    </Section>
+  );
+}
+
 export function PropertiesPanel() {
-  const { selectedId, elementOverrides, updateOverride } = useEditor();
-  const [activeTab, setActiveTab] = useState(2); // 0: Pages, 1: Blocks, 2: Properties
+  const { selectedId, elementOverrides, updateOverride, iframeDoc } = useEditor();
+  const [activeTab, setActiveTab] = useState(3); // 0: Pages, 1: Blocks, 2: Global, 3: Properties
   const [computedStyles, setComputedStyles] = useState<Record<string, string>>({});
+  const [selectedTagName, setSelectedTagName] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedId) {
       const timeout = setTimeout(() => {
-        const el = document.querySelector(`[data-editable-id="${selectedId.replace(/"/g, '\\"')}"]`) as HTMLElement;
+        const doc = iframeDoc || document;
+        const el = doc.querySelector(`[data-editable-id="${selectedId.replace(/"/g, '\\"')}"]`) as HTMLElement;
         if (el) {
+          setSelectedTagName(el.tagName.toLowerCase());
           const styles = window.getComputedStyle(el);
           setComputedStyles({
             content: el.innerText,
@@ -390,6 +556,7 @@ export function PropertiesPanel() {
       return () => clearTimeout(timeout);
     } else {
       setComputedStyles({});
+      setSelectedTagName(null);
     }
   }, [selectedId, elementOverrides]);
 
@@ -407,7 +574,7 @@ export function PropertiesPanel() {
       {/* Panel Header */}
       <div className="p-3 border-b border-black/[0.06] dark:border-white/[0.06]">
         <ToggleGroup 
-          options={["Pages", "Blocks", "Properties"]} 
+          options={["Pages", "Blocks", "Global", "Props"]} 
           activeIndex={activeTab} 
           onChange={setActiveTab}
         />
@@ -417,7 +584,8 @@ export function PropertiesPanel() {
       <div className="flex-1 overflow-y-auto custom-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {activeTab === 0 && <PagesView />}
         {activeTab === 1 && <BlocksView />}
-        {activeTab === 2 && (
+        {activeTab === 2 && <GlobalView />}
+        {activeTab === 3 && (
           <div className={`pb-8 transition-opacity duration-300 ${!selectedId ? 'opacity-30 pointer-events-none select-none' : ''}`}>
             
             {/* Navbar Specific Section */}
@@ -633,6 +801,11 @@ export function PropertiesPanel() {
               </Row>
             </Section>
 
+            {/* Image Section */}
+            {selectedTagName === "img" && (
+              <ImageManager overrides={overrides} handleUpdate={handleUpdate} />
+            )}
+
             {/* Layout Section */}
             <Section title="Layout">
               <Row label={<><Plus className="h-3 w-3" /> Padding Top</>}>
@@ -661,6 +834,16 @@ export function PropertiesPanel() {
                 </div>
               </Row>
               
+              <Row label={<><Plus className="h-3 w-3" /> Invert Theme</>}>
+                <div className="flex items-center gap-2 w-full">
+                  <ToggleGroup 
+                    options={[<span key="yes" className="text-blue-400 font-medium">Yes</span>, <span key="no">No</span>]} 
+                    activeIndex={overrides.invert ? 0 : 1} 
+                    onChange={(idx) => handleUpdate({ invert: idx === 0 })}
+                  />
+                </div>
+              </Row>
+
               <Row label={<><Plus className="h-3 w-3" /> Background</>}>
                 <ColorInput 
                   value={overrides.backgroundColor ?? computedStyles.backgroundColor ?? ""} 

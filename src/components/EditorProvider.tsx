@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthProvider";
 
 export interface TextProperties {
   content?: string;
@@ -19,6 +20,19 @@ export interface TextProperties {
   // Layout-specific
   paddingTop?: number;
   paddingBottom?: number;
+  invert?: boolean;
+  // Image-specific
+  src?: string;
+  alt?: string;
+  opacity?: number;
+}
+
+export interface GlobalTheme {
+  headingFont?: string;
+  bodyFont?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
 }
 
 import { MOCK_PAGE_DATA } from "@/data/mockPageData";
@@ -56,9 +70,20 @@ export interface EditorContextType {
   setViewportSize: (size: "desktop" | "tablet" | "mobile") => void;
   iframeDoc: Document | null;
   setIframeDoc: (doc: Document | null) => void;
+  canvasTheme: "light" | "dark";
+  setCanvasTheme: (theme: "light" | "dark") => void;
+  globalTheme: GlobalTheme;
+  setGlobalTheme: React.Dispatch<React.SetStateAction<GlobalTheme>>;
+  syncStatus: string;
+  publishWebsite: () => Promise<string | null>;
+  isLoaded: boolean;
+  isLeftPanelOpen: boolean;
+  setIsLeftPanelOpen: (val: boolean) => void;
+  isRightPanelOpen: boolean;
+  setIsRightPanelOpen: (val: boolean) => void;
 }
 
-const EditorContext = createContext<EditorContextType | undefined>(undefined);
+export const EditorContext = createContext<EditorContextType | undefined>(undefined);
 
 function BoundingBoxOverlay({ targetId, isHover = false }: { targetId: string | null, isHover?: boolean }) {
   const [rect, setRect] = React.useState<DOMRect | null>(null);
@@ -144,17 +169,96 @@ function BoundingBoxOverlay({ targetId, isHover = false }: { targetId: string | 
   );
 }
 
-export function EditorProvider({ children }: { children: React.ReactNode }) {
+export function EditorProvider({ 
+  children,
+  initialPages,
+  initialOverrides,
+  initialTheme,
+  isPublished = false
+}: { 
+  children: React.ReactNode,
+  initialPages?: PageData[],
+  initialOverrides?: Record<string, Partial<TextProperties>>,
+  initialTheme?: GlobalTheme,
+  isPublished?: boolean
+}) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [elementOverrides, setElementOverrides] = useState<Record<string, Partial<TextProperties>>>({});
+  const [elementOverrides, setElementOverrides] = useState<Record<string, Partial<TextProperties>>>(initialOverrides || {});
   
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
+  const [isPreviewMode, setIsPreviewMode] = useState(isPublished);
   const [viewportSize, setViewportSize] = useState<"desktop" | "tablet" | "mobile">("desktop");
-  const [pages, setPages] = useState<PageData[]>([{ id: "home", name: "Home", blocks: MOCK_PAGE_DATA }]);
+  const [pages, setPages] = useState<PageData[]>(initialPages || [{ id: "home", name: "Home", blocks: MOCK_PAGE_DATA }]);
   const [activePageId, setActivePageId] = useState("home");
   const [iframeDoc, setIframeDoc] = useState<Document | null>(null);
+  const [canvasTheme, setCanvasTheme] = useState<"light" | "dark">("light");
+  const [globalTheme, setGlobalTheme] = useState<GlobalTheme>({});
+  
+  const { user } = useAuth();
+  const [syncStatus, setSyncStatus] = useState<"Synced" | "Saving..." | "Error">("Synced");
+  const [isLoaded, setIsLoaded] = useState(isPublished);
+
+  // Load from Neon DB on mount
+  useEffect(() => {
+    if (!user || isPublished) return;
+    fetch(`/api/sync?uid=${user.uid}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.pages && data.pages.length > 0) setPages(data.pages);
+        if (data.elementOverrides) setElementOverrides(data.elementOverrides);
+        if (data.globalTheme) setGlobalTheme(data.globalTheme);
+        setIsLoaded(true);
+      })
+      .catch(err => {
+        console.error("Failed to load from Neon", err);
+        setIsLoaded(true);
+      });
+  }, [user, isPublished]);
+
+  // Save to Neon DB on change (debounced)
+  useEffect(() => {
+    if (!user || pages.length === 0 || isPublished || !isLoaded) return;
+    setSyncStatus("Saving...");
+    const timer = setTimeout(() => {
+      fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: user.uid,
+          pages,
+          elementOverrides,
+          globalTheme
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setSyncStatus("Synced");
+        else setSyncStatus("Error");
+      })
+      .catch(() => setSyncStatus("Error"));
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [pages, elementOverrides, globalTheme, user]);
+
+  const publishWebsite = async () => {
+    if (!user) return null;
+    try {
+      const res = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: user.uid, pages, elementOverrides, globalTheme })
+      });
+      const data = await res.json();
+      return data.slug || null;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
 
   const addPage = () => {
     const newId = `page-${pages.length + 1}`;
@@ -252,6 +356,15 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const undoAll = React.useCallback(() => {
+    if (historyIndexRef.current > 0) {
+      isUndoRedoRef.current = true;
+      historyIndexRef.current = 0;
+      setElementOverrides(historyRef.current[0]);
+      updateHistoryUI();
+    }
+  }, []);
+
   const redo = React.useCallback(() => {
     if (historyIndexRef.current < historyRef.current.length - 1) {
       isUndoRedoRef.current = true;
@@ -278,6 +391,9 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         if (e.shiftKey) {
           e.preventDefault();
           redo();
+        } else if (e.altKey) {
+          e.preventDefault();
+          undoAll(); // Multiple undos
         } else {
           e.preventDefault();
           undo();
@@ -298,8 +414,10 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     const handleClickOutside = (e: MouseEvent) => {
       // If clicking directly on body or non-editable wrapper, clear selection
       const target = e.target as HTMLElement;
-      if (target.closest('[data-editable]') || target.closest('[data-editor-panel="true"]')) {
-        return;
+      if (target && typeof target.closest === 'function') {
+        if (target.closest('[data-editable]') || target.closest('[data-editor-panel="true"]')) {
+          return;
+        }
       }
       setSelectedId(null);
       setEditingId(null);
@@ -321,7 +439,13 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       pages, activePageId, setActivePageId, addPage, updatePageName, updateBlockType,
       addGeneratedPage,
       cycleAllVariants,
-      iframeDoc, setIframeDoc
+      iframeDoc, setIframeDoc,
+      canvasTheme, setCanvasTheme,
+      globalTheme, setGlobalTheme,
+      syncStatus, publishWebsite,
+      isLoaded,
+      isLeftPanelOpen, setIsLeftPanelOpen,
+      isRightPanelOpen, setIsRightPanelOpen
     }}>
       {children}
       {!isPreviewMode && selectedId && <BoundingBoxOverlay targetId={selectedId} />}

@@ -186,6 +186,59 @@
   --color-fd-card: hsl(var(--hu-background));
 }
 
+.light {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --hu-background: 0, 0%, 100%;
+  --hu-foreground: 0, 0%, 14%;
+  --hu-card: 0, 0%, 99%;
+  --hu-card-foreground: 0, 0%, 14%;
+  --hu-primary: 235, 100%, 60%;
+  --hu-primary-foreground: 0, 0%, 98%;
+  --hu-secondary: 0, 0%, 97%;
+  --hu-secondary-foreground: 0, 0%, 20%;
+  --hu-muted: 0, 0%, 97%;
+  --hu-muted-foreground: 0, 0%, 56%;
+  --hu-accent: 0, 0%, 96%;
+  --hu-accent-foreground: 0, 0%, 20%;
+  --hu-destructive: 9, 96%, 47%;
+  --hu-destructive-foreground: 0, 0%, 98%;
+  --hu-border: 0, 0%, 92%;
+  --hu-input: 0, 0%, 100%;
+  --hu-ring: 0, 0%, 71%;
+  --color-fd-background: hsl(var(--hu-background));
+  --color-fd-card: hsl(var(--hu-background));
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -251,14 +304,14 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Funnel Sans', sans-serif;
+    font-family: var(--font-body, 'Funnel Sans', sans-serif);
     font-weight: 400;
   }
   html {
-    font-family: 'Funnel Sans', sans-serif;
+    font-family: var(--font-body, 'Funnel Sans', sans-serif);
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Funnel Sans', sans-serif;
+    font-family: var(--font-heading, 'Funnel Sans', sans-serif);
     font-weight: 500;
   }
 }

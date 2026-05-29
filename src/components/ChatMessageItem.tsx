@@ -11,7 +11,7 @@ export function ChatMessageItem({ msg }: { msg: Message }) {
       <div className={`flex items-start w-full ${isAi ? "justify-start" : "justify-end"}`}>
 
         {/* Bubble */}
-        <div className={`text-sm leading-relaxed transition-colors duration-300 ${
+        <div className={`text-[15px] leading-relaxed transition-colors duration-300 ${
           isAi
             ? "text-black dark:text-[#EFEEEA] pr-4"
             : "bg-black/[0.04] dark:bg-white/[0.08] text-black dark:text-[#EFEEEA] border border-black/[0.04] dark:border-white/[0.04] px-4 py-2 rounded-xl max-w-[85%]"

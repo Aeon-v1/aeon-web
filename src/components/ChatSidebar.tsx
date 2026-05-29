@@ -6,6 +6,7 @@ import { PromptBox } from "./ui/PromptBox";
 import { ChatMessageItem } from "./ChatMessageItem";
 import { useEditor } from "./EditorProvider";
 import AIThinkingBlock from "./ui/ai-thinking-block";
+import { useAuth } from "./AuthProvider";
 
 export interface Message {
   id: string;
@@ -46,6 +47,7 @@ export function ChatSidebar() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState("");
   const { addGeneratedPage } = useEditor();
+  const { user } = useAuth();
   const userName = "Builder";
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -73,9 +75,13 @@ export function ChatSidebar() {
       setCurrentPrompt(text);
 
       try {
-        const res = await fetch("/api/generate", {
+        const token = await user?.getIdToken();
+        const res = await fetch("http://localhost:3000/api/generate", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
           body: JSON.stringify({ prompt: text }),
         });
 
@@ -120,9 +126,13 @@ export function ChatSidebar() {
 
     try {
       abortControllerRef.current = new AbortController();
-      const response = await fetch("/api/chat", {
+      const token = await user?.getIdToken();
+      const response = await fetch("http://localhost:3000/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ messages: chatHistory }),
         signal: abortControllerRef.current.signal,
       });
@@ -158,6 +168,19 @@ export function ChatSidebar() {
 
   return (
     <div className="flex flex-col h-full bg-[#FDFDFC] dark:bg-[#1F1F1E] w-full lg:w-[25%] relative shrink-0 z-40 pointer-events-auto transition-colors duration-300">
+      {user?.isAnonymous && (
+        <div className="absolute top-4 right-4 z-50">
+          <button 
+            onClick={() => {
+              const callbackUrl = encodeURIComponent("http://localhost:3001/auth/callback");
+              window.location.href = `http://localhost:3000/login?redirect=${callbackUrl}`;
+            }}
+            className="px-3 py-1.5 text-[13px] font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm cursor-pointer"
+          >
+            Sign In to Save
+          </button>
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {messages.length === 0 ? (
           /* INITIAL STATE: Center aligned prompt */
@@ -175,7 +198,7 @@ export function ChatSidebar() {
                 transition={{ delay: 0.1, duration: 0.5 }}
                 className="text-center select-none"
               >
-                <h2 className="text-lg font-medium tracking-tight text-black dark:text-white transition-colors duration-300">
+                <h2 className="text-[19px] font-medium tracking-tight text-black dark:text-white transition-colors duration-300">
                   Hey {userName || "there"}, how is it going?
                 </h2>
               </motion.div>
@@ -224,7 +247,7 @@ export function ChatSidebar() {
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-neutral-500 dark:bg-neutral-500"></span>
                       </span>
                     </div>
-                    <div className="px-4 py-2 rounded-2xl text-xs md:text-sm font-sans flex items-center gap-1.5 shadow-sm bg-white dark:bg-[#181817] border border-black/[0.04] dark:border-white/[0.03] text-neutral-500 dark:text-neutral-400 transition-colors duration-300">
+                    <div className="px-4 py-2 rounded-2xl text-[13px] md:text-[15px] font-sans flex items-center gap-1.5 shadow-sm bg-white dark:bg-[#181817] border border-black/[0.04] dark:border-white/[0.03] text-neutral-500 dark:text-neutral-400 transition-colors duration-300">
                       <span>Generating response</span>
                       <span className="flex items-center gap-0.5 ml-0.5 mt-1">
                         <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:-0.3s]" />
