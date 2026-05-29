@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Editable } from "@/components/Editable";
+import { Editable, EditableSection } from "@/components/Editable";
 
 export interface Stat {
   value: string;
@@ -28,7 +28,7 @@ export function StatVariant1({
   stats = defaultStats,
 }: StatVariant1Props) {
   return (
-    <section className="w-full py-24 md:py-32 bg-[#111110] text-[#EFEEEA] font-sans border-t border-white/[0.04]">
+    <EditableSection className="w-full py-24 md:py-32 bg-background text-foreground font-sans border-t border-border">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-8 justify-between items-start">
           <motion.div
@@ -42,13 +42,13 @@ export function StatVariant1({
               as="h2"
               defaultText={headline}
               propName="headline"
-              className="text-3xl md:text-4xl font-medium tracking-tighter text-[#EFEEEA]"
+              className="text-3xl md:text-4xl font-medium tracking-tighter text-foreground"
             />
             <Editable
               as="p"
               defaultText={subtext}
               propName="subtext"
-              className="text-[#D8D8D6] text-lg font-light leading-relaxed"
+              className="text-muted-foreground text-lg font-light leading-relaxed"
             />
           </motion.div>
 
@@ -60,25 +60,25 @@ export function StatVariant1({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 220, damping: 28, delay: i * 0.1 }}
-                className="flex flex-col gap-2 border-l border-white/[0.08] pl-6"
+                className="flex flex-col gap-2 border-l border-border pl-6"
               >
                 <Editable
                   as="span"
                   defaultText={stat.value}
                   propName={`stats[${i}].value`}
-                  className="text-4xl md:text-5xl font-medium tracking-tighter text-[#EFEEEA]"
+                  className="text-4xl md:text-5xl font-medium tracking-tighter text-foreground"
                 />
                 <Editable
                   as="span"
                   defaultText={stat.label}
                   propName={`stats[${i}].label`}
-                  className="text-[#D8D8D6] text-sm font-light tracking-wide"
+                  className="text-muted-foreground text-sm font-light tracking-wide"
                 />
               </motion.div>
             ))}
           </div>
         </div>
       </div>
-    </section>
+    </EditableSection>
   );
 }

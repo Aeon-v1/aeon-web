@@ -8,6 +8,7 @@ export interface EditableProps extends React.HTMLAttributes<HTMLElement> {
   defaultText: string;
   propName?: string;
   inline?: boolean;
+  id?: string;
 }
 
 export function Editable({
@@ -16,10 +17,12 @@ export function Editable({
   propName,
   inline = false,
   className = "",
+  id: explicitId,
   ...props
 }: EditableProps) {
-  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, updateOverride } = useEditor();
-  const id = useId(); // Unique ID for each editable instance
+  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, updateOverride, isPreviewMode } = useEditor();
+  const generatedId = useId(); 
+  const id = explicitId ?? generatedId;
   
   const isSelected = selectedId === id;
   const isEditing = editingId === id;
@@ -46,6 +49,7 @@ export function Editable({
   }, [isEditing]);
 
   const handleClick = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
     e.stopPropagation(); // Prevent document click from clearing selection
     if (!isSelected) {
       setSelectedId(id);
@@ -54,16 +58,19 @@ export function Editable({
   };
 
   const handleMouseOver = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
     e.stopPropagation();
     setHoveredId(id);
   };
 
   const handleMouseOut = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
     e.stopPropagation();
     setHoveredId(null);
   };
 
   const handleDoubleClick = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
     e.stopPropagation();
     setSelectedId(id);
     setEditingId(id);
@@ -139,6 +146,7 @@ export interface EditableButtonProps extends React.HTMLAttributes<HTMLElement> {
   as?: React.ElementType;
   href?: string;
   children?: React.ReactNode;
+  id?: string;
 }
 
 export function EditableButton({
@@ -146,10 +154,12 @@ export function EditableButton({
   href,
   className = "",
   children,
+  id: explicitId,
   ...props
 }: EditableButtonProps) {
-  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides } = useEditor();
-  const id = useId(); 
+  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode } = useEditor();
+  const generatedId = useId(); 
+  const id = explicitId ?? generatedId; 
   
   const isSelected = selectedId === id;
   
@@ -157,6 +167,7 @@ export function EditableButton({
   const elementRef = useRef<HTMLElement>(null);
 
   const handleClick = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
     e.preventDefault(); // Prevent navigation
     e.stopPropagation();
     if (!isSelected) {
@@ -166,11 +177,13 @@ export function EditableButton({
   };
 
   const handleMouseOver = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
     e.stopPropagation();
     setHoveredId(id);
   };
 
   const handleMouseOut = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
     e.stopPropagation();
     setHoveredId(null);
   };
@@ -195,6 +208,73 @@ export function EditableButton({
       onMouseOver={handleMouseOver}
       onMouseOut={handleMouseOut}
       href={currentHref}
+      {...props}
+    >
+      {children}
+    </Component>
+  );
+}
+
+export interface EditableSectionProps extends React.HTMLAttributes<HTMLElement> {
+  as?: React.ElementType;
+  children?: React.ReactNode;
+  id?: string;
+}
+
+export function EditableSection({
+  as: Component = "section",
+  className = "",
+  children,
+  id: explicitId,
+  ...props
+}: EditableSectionProps) {
+  const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode } = useEditor();
+  const generatedId = useId(); 
+  const id = explicitId ?? generatedId; 
+  
+  const isSelected = selectedId === id;
+  const overrides = elementOverrides[id] || {};
+  const elementRef = useRef<HTMLElement>(null);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    if (!isSelected) {
+      setSelectedId(id);
+      setEditingId(null);
+    }
+  };
+
+  const handleMouseOver = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    setHoveredId(id);
+  };
+
+  const handleMouseOut = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    setHoveredId(null);
+  };
+
+  const dynamicStyles: React.CSSProperties = {
+    ...props.style,
+  };
+  
+  if (overrides.backgroundColor) dynamicStyles.backgroundColor = overrides.backgroundColor;
+  if (overrides.paddingTop !== undefined) dynamicStyles.paddingTop = `${overrides.paddingTop}px`;
+  if (overrides.paddingBottom !== undefined) dynamicStyles.paddingBottom = `${overrides.paddingBottom}px`;
+
+  return (
+    <Component
+      ref={elementRef}
+      className={className}
+      style={dynamicStyles}
+      data-editable="true"
+      data-editable-id={id}
+      onClick={handleClick}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
       {...props}
     >
       {children}

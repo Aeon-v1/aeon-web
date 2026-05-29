@@ -16,9 +16,20 @@ export interface TextProperties {
   borderRadius?: number;
   boxShadow?: string;
   href?: string;
+  // Layout-specific
+  paddingTop?: number;
+  paddingBottom?: number;
 }
 
-interface EditorContextType {
+import { MOCK_PAGE_DATA } from "@/data/mockPageData";
+
+export interface PageData {
+  id: string;
+  name: string;
+  blocks: any[];
+}
+
+export interface EditorContextType {
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
   editingId: string | null;
@@ -27,6 +38,21 @@ interface EditorContextType {
   setHoveredId: (id: string | null) => void;
   elementOverrides: Record<string, Partial<TextProperties>>;
   updateOverride: (id: string, updates: Partial<TextProperties>) => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  isPreviewMode: boolean;
+  setIsPreviewMode: (val: boolean) => void;
+  pages: PageData[];
+  activePageId: string;
+  setActivePageId: (id: string) => void;
+  addPage: () => void;
+  updatePageName: (id: string, name: string) => void;
+  updateBlockType: (pageId: string, blockIndex: number, newType: string) => void;
+  cycleAllVariants: () => void;
+  viewportSize: "desktop" | "tablet" | "mobile";
+  setViewportSize: (size: "desktop" | "tablet" | "mobile") => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -93,16 +119,142 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [elementOverrides, setElementOverrides] = useState<Record<string, Partial<TextProperties>>>({});
+  
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [viewportSize, setViewportSize] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [pages, setPages] = useState<PageData[]>([{ id: "home", name: "Home", blocks: MOCK_PAGE_DATA }]);
+  const [activePageId, setActivePageId] = useState("home");
 
-  const updateOverride = (id: string, updates: Partial<TextProperties>) => {
-    setElementOverrides(prev => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        ...updates
+  const addPage = () => {
+    const newId = `page-${pages.length + 1}`;
+    setPages(prev => [...prev, { id: newId, name: `Page ${pages.length + 1}`, blocks: [] }]);
+    setActivePageId(newId);
+  };
+
+  const updatePageName = (id: string, name: string) => {
+    setPages(prev => prev.map(p => p.id === id ? { ...p, name: name.trim() === "" ? p.name : name } : p));
+  };
+
+  const updateBlockType = (pageId: string, blockIndex: number, newType: string) => {
+    setPages(prev => prev.map(p => {
+      if (p.id !== pageId) return p;
+      const newBlocks = [...p.blocks];
+      if (newBlocks[blockIndex]) {
+        newBlocks[blockIndex] = { ...newBlocks[blockIndex], type: newType };
       }
+      return { ...p, blocks: newBlocks };
     }));
   };
+
+  const cycleAllVariants = React.useCallback(() => {
+    setPages(prev => prev.map(p => {
+      if (p.id !== activePageId) return p;
+      const newBlocks = p.blocks.map(block => {
+        const match = block.type.match(/^(.*?)Variant(\d+)$/);
+        if (!match) return block;
+        const baseName = match[1];
+        const currentVariant = parseInt(match[2]);
+
+        let maxVariants = 1;
+        if (baseName === "Navbar") maxVariants = 3;
+        else if (baseName === "FAQ") maxVariants = 4;
+        else if (baseName === "CTA") maxVariants = 5;
+        else if (baseName === "Footer") maxVariants = 5;
+
+        if (maxVariants > 1) {
+          const nextVariant = currentVariant < maxVariants ? currentVariant + 1 : 1;
+          return { ...block, type: `${baseName}Variant${nextVariant}` };
+        }
+        return block;
+      });
+      return { ...p, blocks: newBlocks };
+    }));
+  }, [activePageId]);
+
+  const historyRef = React.useRef<Record<string, Partial<TextProperties>>[]>([{}]);
+  const historyIndexRef = React.useRef<number>(0);
+  const isUndoRedoRef = React.useRef<boolean>(false);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+
+  const updateHistoryUI = () => {
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(historyIndexRef.current < historyRef.current.length - 1);
+  };
+
+  const updateOverride = React.useCallback((id: string, updates: Partial<TextProperties>) => {
+    setElementOverrides(prev => {
+      const newState = {
+        ...prev,
+        [id]: {
+          ...prev[id],
+          ...updates
+        }
+      };
+
+      if (!isUndoRedoRef.current) {
+        // truncate future history if a new change is made after undoing
+        const newHistory = historyRef.current.slice(0, historyIndexRef.current + 1);
+        newHistory.push(newState);
+        historyRef.current = newHistory;
+        historyIndexRef.current = newHistory.length - 1;
+        updateHistoryUI();
+      }
+      isUndoRedoRef.current = false;
+
+      return newState;
+    });
+  }, []);
+
+  const undo = React.useCallback(() => {
+    if (historyIndexRef.current > 0) {
+      isUndoRedoRef.current = true;
+      historyIndexRef.current -= 1;
+      setElementOverrides(historyRef.current[historyIndexRef.current]);
+      updateHistoryUI();
+    }
+  }, []);
+
+  const redo = React.useCallback(() => {
+    if (historyIndexRef.current < historyRef.current.length - 1) {
+      isUndoRedoRef.current = true;
+      historyIndexRef.current += 1;
+      setElementOverrides(historyRef.current[historyIndexRef.current]);
+      updateHistoryUI();
+    }
+  }, []);
+
+  // Keyboard Shortcuts for Undo/Redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target instanceof HTMLInputElement || 
+        target instanceof HTMLTextAreaElement || 
+        target.isContentEditable ||
+        target.closest('[data-editable]')
+      ) {
+        return;
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          e.preventDefault();
+          redo();
+        } else {
+          e.preventDefault();
+          undo();
+        }
+      }
+
+      if (e.key.toLowerCase() === 'h' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        cycleAllVariants();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo]);
 
   // Clear selection when clicking outside any editable element
   useEffect(() => {
@@ -125,11 +277,16 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
       selectedId, setSelectedId, 
       editingId, setEditingId, 
       hoveredId, setHoveredId,
-      elementOverrides, updateOverride
+      elementOverrides, updateOverride,
+      undo, redo, canUndo, canRedo,
+      isPreviewMode, setIsPreviewMode,
+      viewportSize, setViewportSize,
+      pages, activePageId, setActivePageId, addPage, updatePageName, updateBlockType,
+      cycleAllVariants
     }}>
       {children}
-      {selectedId && <BoundingBoxOverlay targetId={selectedId} />}
-      {hoveredId && hoveredId !== selectedId && <BoundingBoxOverlay targetId={hoveredId} isHover={true} />}
+      {!isPreviewMode && selectedId && <BoundingBoxOverlay targetId={selectedId} />}
+      {!isPreviewMode && hoveredId && hoveredId !== selectedId && <BoundingBoxOverlay targetId={hoveredId} isHover={true} />}
     </EditorContext.Provider>
   );
 }

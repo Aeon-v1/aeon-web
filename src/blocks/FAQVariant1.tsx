@@ -3,7 +3,7 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
-import { Editable } from "@/components/Editable";
+import { Editable, EditableSection } from "@/components/Editable";
 
 export interface FAQItem {
   question: string;
@@ -32,8 +32,8 @@ export function FAQVariant1({
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section className="w-full py-24 md:py-32 bg-[#111110] text-[#EFEEEA] font-sans">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <EditableSection className="w-full py-24 md:py-32 bg-background text-foreground font-sans">
+      <div className="max-w-3xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -45,17 +45,17 @@ export function FAQVariant1({
             as="h2"
             defaultText={headline}
             propName="headline"
-            className="text-4xl font-medium tracking-tighter sm:text-5xl text-[#EFEEEA]"
+            className="text-4xl font-bold tracking-tighter sm:text-5xl text-foreground"
           />
           <Editable
             as="p"
             defaultText={subtext}
             propName="subtext"
-            className="text-[#D8D8D6] max-w-xl text-lg font-light"
+            className="text-muted-foreground max-w-xl text-lg font-light"
           />
         </motion.div>
 
-        <div className="max-w-2xl mx-auto divide-y divide-white/[0.06]">
+        <div className="max-w-2xl mx-auto divide-y divide-border">
           {faqs.map((faq, i) => (
             <motion.div
               key={i}
@@ -78,11 +78,11 @@ export function FAQVariant1({
                     as="span"
                     defaultText={faq.question}
                     propName={`faqs[${i}].question`}
-                    className="text-[#EFEEEA] font-medium text-base group-hover:text-white transition-colors"
+                    className="text-foreground font-medium text-base group-hover:opacity-80 transition-opacity"
                     inline
                   />
                 </div>
-                <span className="shrink-0 text-[#D8D8D6]">
+                <span className="shrink-0 text-muted-foreground">
                   {openIndex === i ? (
                     <Minus className="h-4 w-4" />
                   ) : (
@@ -105,7 +105,7 @@ export function FAQVariant1({
                       as="p"
                       defaultText={faq.answer}
                       propName={`faqs[${i}].answer`}
-                      className="pb-5 text-[#D8D8D6] font-light leading-relaxed text-sm"
+                      className="pb-5 text-muted-foreground font-light leading-relaxed text-sm"
                     />
                   </motion.div>
                 )}
@@ -114,6 +114,6 @@ export function FAQVariant1({
           ))}
         </div>
       </div>
-    </section>
+    </EditableSection>
   );
 }

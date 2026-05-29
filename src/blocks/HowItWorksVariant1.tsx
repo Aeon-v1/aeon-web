@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Editable } from "@/components/Editable";
+import { Editable, EditableSection } from "@/components/Editable";
 
 export interface Step {
   title: string;
@@ -36,7 +36,7 @@ export function HowItWorksVariant1({
   steps = defaultSteps,
 }: HowItWorksVariant1Props) {
   return (
-    <section className="w-full py-24 md:py-32 bg-[#111110] text-[#EFEEEA] font-sans">
+    <EditableSection className="w-full py-24 md:py-32 bg-background text-foreground font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -49,19 +49,19 @@ export function HowItWorksVariant1({
             as="h2"
             defaultText={headline}
             propName="headline"
-            className="text-3xl md:text-5xl font-medium tracking-tighter text-[#EFEEEA]"
+            className="text-3xl md:text-5xl font-medium tracking-tighter text-foreground"
           />
           <Editable
             as="p"
             defaultText={subtext}
             propName="subtext"
-            className="text-[#D8D8D6] max-w-2xl text-lg font-light leading-relaxed"
+            className="text-muted-foreground max-w-2xl text-lg font-light leading-relaxed"
           />
         </motion.div>
 
         <div className="relative max-w-4xl mx-auto">
           {/* Connecting line */}
-          <div className="absolute top-8 left-8 right-8 h-[1px] bg-white/[0.08] hidden md:block" />
+          <div className="absolute top-8 left-8 right-8 h-[1px] bg-border hidden md:block" />
 
           <div className="grid gap-12 md:grid-cols-3 relative z-10">
             {steps.map((step, i) => (
@@ -73,7 +73,7 @@ export function HowItWorksVariant1({
                 transition={{ type: "spring", stiffness: 220, damping: 28, delay: i * 0.15 }}
                 className="flex flex-col items-center text-center gap-6"
               >
-                <div className="h-16 w-16 rounded-full bg-[#1c1c1a] border border-white/[0.1] flex items-center justify-center text-xl font-mono text-[#EFEEEA] shadow-lg shadow-black/50">
+                <div className="h-16 w-16 rounded-full bg-card border border-border flex items-center justify-center text-xl font-mono text-foreground">
                   0{i + 1}
                 </div>
                 <div>
@@ -81,13 +81,13 @@ export function HowItWorksVariant1({
                     as="h3"
                     defaultText={step.title}
                     propName={`steps[${i}].title`}
-                    className="text-xl font-medium text-[#EFEEEA] mb-3"
+                    className="text-xl font-medium text-foreground mb-3"
                   />
                   <Editable
                     as="p"
                     defaultText={step.description}
                     propName={`steps[${i}].description`}
-                    className="text-[#D8D8D6] font-light text-sm leading-relaxed"
+                    className="text-muted-foreground font-light text-sm leading-relaxed"
                   />
                 </div>
               </motion.div>
@@ -95,6 +95,6 @@ export function HowItWorksVariant1({
           </div>
         </div>
       </div>
-    </section>
+    </EditableSection>
   );
 }

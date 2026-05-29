@@ -2,6 +2,16 @@ import { BlockData } from "@/components/BlockRenderer";
 
 export const MOCK_PAGE_DATA: BlockData[] = [
   {
+    type: "NavbarVariant2",
+    props: {
+      logoText: "Aeon Web",
+      link1: "Platform",
+      link2: "Solutions",
+      link3: "Resources",
+      ctaText: "Get Started",
+    },
+  },
+  {
     type: "HeroVariant1",
     props: {
       headline: "The Future of Cloud Rendering",

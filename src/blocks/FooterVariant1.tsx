@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Editable } from "@/components/Editable";
+import { Editable, EditableSection } from "@/components/Editable";
 
 export interface FooterLink {
   label: string;
@@ -23,7 +23,7 @@ export function FooterVariant1({
   copyright = "© 2025 Aeon. All rights reserved.",
 }: FooterVariant1Props) {
   return (
-    <footer className="w-full border-t border-white/[0.06] bg-[#111110] text-[#D8D8D6] font-sans">
+    <EditableSection as="footer" className="w-full border-t border-border bg-background text-muted-foreground font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -38,14 +38,14 @@ export function FooterVariant1({
               as="span"
               defaultText={brand}
               propName="brand"
-              className="text-[#EFEEEA] text-xl font-medium tracking-tight inline-block"
+              className="text-foreground text-xl font-medium tracking-tight inline-block"
               inline
             />
             <Editable
               as="p"
               defaultText={tagline}
               propName="tagline"
-              className="text-sm text-[#D8D8D6] font-light leading-relaxed"
+              className="text-sm text-muted-foreground font-light leading-relaxed"
             />
           </div>
 
@@ -56,7 +56,7 @@ export function FooterVariant1({
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm font-light text-[#D8D8D6] transition-colors hover:text-[#EFEEEA]"
+                  className="text-sm font-light text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Editable as="span" defaultText={link.label} propName={`links[${index}].label`} inline />
                 </a>
@@ -66,18 +66,18 @@ export function FooterVariant1({
         </motion.div>
 
         {/* Divider + Copyright */}
-        <div className="mt-12 border-t border-white/[0.04] pt-6 flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="mt-12 border-t border-border pt-6 flex flex-col items-center justify-between gap-4 md:flex-row">
           <Editable
             as="p"
             defaultText={copyright}
             propName="copyright"
-            className="text-xs font-mono text-[#D8D8D6]/60 tracking-wide"
+            className="text-xs font-mono text-muted-foreground/60 tracking-wide"
           />
-          <p className="text-xs font-mono text-[#D8D8D6]/40 tracking-wide">
+          <p className="text-xs font-mono text-muted-foreground/40 tracking-wide">
             Powered by Aeon Web Renderer
           </p>
         </div>
       </div>
-    </footer>
+    </EditableSection>
   );
 }

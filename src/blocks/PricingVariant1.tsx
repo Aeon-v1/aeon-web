@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
-import { Editable } from "@/components/Editable"
+import { Editable, EditableSection } from "@/components/Editable"
 import {
   Card,
   CardContent,
@@ -58,7 +58,7 @@ export function PricingVariant1({
   plans = defaultPlans,
 }: PricingVariant1Props) {
   return (
-    <section className="w-full py-24 md:py-32 bg-[#111110] text-[#EFEEEA] transition-colors duration-300 font-sans">
+    <EditableSection className="w-full py-24 md:py-32 bg-background text-foreground transition-colors duration-300 font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
@@ -72,13 +72,13 @@ export function PricingVariant1({
               as="h2"
               defaultText={headline}
               propName="headline"
-              className="text-4xl font-medium tracking-tighter sm:text-5xl md:text-6xl text-[#EFEEEA]"
+              className="text-4xl font-medium tracking-tighter sm:text-5xl md:text-6xl text-foreground"
             />
             <Editable
               as="p"
               defaultText={subtext}
               propName="subtext"
-              className="max-w-[900px] text-[#D8D8D6] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-light mx-auto"
+              className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-light mx-auto"
             />
           </div>
         </motion.div>
@@ -95,13 +95,13 @@ export function PricingVariant1({
               className="h-full w-full relative"
             >
               {plan.popular && (
-                <div className="absolute top-0 right-8 -translate-y-1/2 bg-[#EFEEEA] text-[#111110] px-4 py-1 rounded-[5px] text-xs font-mono font-medium uppercase tracking-wider z-20 shadow-sm">
+                <div className="absolute top-0 right-8 -translate-y-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-[5px] text-xs font-mono font-medium uppercase tracking-wider z-20">
                   Most Popular
                 </div>
               )}
               <Card
-                className={`flex flex-col justify-between h-full relative bg-[#161615] text-[#EFEEEA] border-white/[0.04] shadow-md transition-colors ${
-                  plan.popular ? "border-white/[0.1] shadow-white/[0.02]" : ""
+                className={`flex flex-col justify-between h-full relative bg-card text-card-foreground border-border transition-colors ${
+                  plan.popular ? "border-primary" : ""
                 }`}
               >
                 <CardHeader>
@@ -109,21 +109,21 @@ export function PricingVariant1({
                     as="div"
                     defaultText={plan.name}
                     propName={`plans[${index}].name`}
-                    className="text-xl font-medium tracking-tight text-[#EFEEEA] font-sans"
+                    className="text-xl font-medium tracking-tight text-card-foreground font-sans"
                   />
                   <div className="text-5xl font-medium tracking-tighter mt-2 flex items-baseline">
                     <Editable as="span" defaultText={plan.price} propName={`plans[${index}].price`} inline />
-                    <span className="text-lg text-[#D8D8D6] font-light ml-1">/mo</span>
+                    <span className="text-lg text-muted-foreground font-light ml-1">/mo</span>
                   </div>
                   <Editable
                     as="p"
                     defaultText={plan.description}
                     propName={`plans[${index}].description`}
-                    className="text-[#D8D8D6] font-light mt-2 text-sm"
+                    className="text-muted-foreground font-light mt-2 text-sm"
                   />
                 </CardHeader>
                 <CardContent className="grid gap-4 flex-1 mt-4">
-                  <ul className="space-y-3 text-sm text-[#D8D8D6]">
+                  <ul className="space-y-3 text-sm text-muted-foreground">
                     {plan.features.map((feature, i) => (
                       <li key={i} className="flex items-center gap-3">
                         <svg
@@ -136,7 +136,7 @@ export function PricingVariant1({
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="h-4 w-4 text-[#EFEEEA]"
+                          className="h-4 w-4 text-foreground"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
@@ -157,8 +157,8 @@ export function PricingVariant1({
                     whileTap={{ scale: 0.96 }}
                     className={`w-full py-3 px-4 rounded-[5px] font-mono text-sm tracking-tight transition-colors ${
                       plan.popular
-                        ? "bg-[#EFEEEA] text-[#111110] hover:bg-white"
-                        : "bg-white/[0.04] text-[#EFEEEA] hover:bg-white/[0.08] border border-white/[0.04]"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border"
                     }`}
                   >
                     <Editable as="span" defaultText={plan.ctaText} propName={`plans[${index}].ctaText`} inline />
@@ -169,6 +169,6 @@ export function PricingVariant1({
           ))}
         </div>
       </div>
-    </section>
+    </EditableSection>
   )
 }

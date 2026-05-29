@@ -89,6 +89,46 @@ function Input({ value, onChange, type = "text", className = "", postfix }: { va
   );
 }
 
+function rgbToHex(rgb: string) {
+  if (!rgb) return "#000000";
+  if (rgb.startsWith("#")) {
+    if (rgb.length === 4) return "#" + rgb[1]+rgb[1]+rgb[2]+rgb[2]+rgb[3]+rgb[3];
+    return rgb.substring(0, 7);
+  }
+  const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (!match) return "#000000";
+  const r = parseInt(match[1]).toString(16).padStart(2, '0');
+  const g = parseInt(match[2]).toString(16).padStart(2, '0');
+  const b = parseInt(match[3]).toString(16).padStart(2, '0');
+  return `#${r}${g}${b}`;
+}
+
+function ColorInput({ value, onChange }: { value: string, onChange?: (val: string) => void }) {
+  const hexValue = rgbToHex(value);
+  
+  return (
+    <div className="relative w-full flex items-center">
+      <div className="absolute left-1.5 flex items-center justify-center pointer-events-none">
+        <div className="w-4 h-4 rounded-[3px] border border-black/10 dark:border-white/10 shadow-sm overflow-hidden relative">
+           <div className="absolute inset-0" style={{ backgroundColor: value || "#000000" }} />
+        </div>
+      </div>
+      <input 
+        type="color"
+        value={hexValue}
+        onChange={(e) => onChange?.(e.target.value)}
+        className="absolute left-1.5 w-4 h-4 opacity-0 cursor-pointer"
+      />
+      <input 
+        type="text" 
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        className={`w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md pl-7 pr-2.5 py-1.5 text-xs text-black dark:text-[#EFEEEA] placeholder:text-gray-600 dark:text-[#D8D8D6]/40 focus:outline-none focus:border-black/[0.2] dark:focus:border-white/[0.2] transition-colors`}
+      />
+    </div>
+  );
+}
+
 function Dropdown({ value, placeholder, icon }: { value?: string, placeholder?: string, icon?: React.ReactNode }) {
   return (
     <button className="w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-xs text-black dark:text-[#EFEEEA] flex items-center justify-between hover:border-black/[0.1] dark:hover:border-white/[0.1] transition-colors">
@@ -184,9 +224,10 @@ function Slider({ value }: { value: number }) {
   );
 }
 
-function TreeItem({ icon, label, level = 0, active = false, collapsible = false, collapsed = false }: { icon: React.ReactNode, label: React.ReactNode, level?: number, active?: boolean, collapsible?: boolean, collapsed?: boolean }) {
+function TreeItem({ icon, label, level = 0, active = false, collapsible = false, collapsed = false, onClick }: { icon: React.ReactNode, label: React.ReactNode, level?: number, active?: boolean, collapsible?: boolean, collapsed?: boolean, onClick?: () => void }) {
   return (
     <button 
+      onClick={onClick}
       className={`w-full flex items-center gap-1.5 py-1.5 px-3 text-xs transition-colors hover:bg-black/[0.04] dark:hover:bg-white/[0.04] ${active ? "bg-white dark:bg-[#1c1c1a] text-black dark:text-[#EFEEEA]" : "text-gray-600 dark:text-[#D8D8D6]"}`}
       style={{ paddingLeft: `${(level * 16) + 12}px` }}
     >
@@ -204,18 +245,17 @@ function TreeItem({ icon, label, level = 0, active = false, collapsible = false,
 }
 
 function PagesView() {
-  const [pages, setPages] = useState([{ id: "home", name: "Home" }]);
+  const { pages, activePageId, setActivePageId, addPage, updatePageName } = useEditor();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleAddPage = () => {
     const newId = `page-${pages.length + 1}`;
-    setPages([...pages, { id: newId, name: "" }]);
+    addPage();
     setEditingId(newId);
   };
 
   const handleNameChange = (id: string, newName: string) => {
-    const finalName = newName.trim() === "" ? `page-${pages.length}` : newName;
-    setPages(pages.map(p => p.id === id ? { ...p, name: finalName } : p));
+    updatePageName(id, newName);
     setEditingId(null);
   };
 
@@ -249,10 +289,11 @@ function PagesView() {
           ) : (
             <TreeItem 
               key={page.id}
+              onClick={() => setActivePageId(page.id)}
               icon={idx === 0 ? <Home className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />} 
               label={idx === 0 ? page.name : `/${page.name}`} 
               level={0} 
-              active={idx === 0} 
+              active={page.id === activePageId} 
             />
           )
         ))}
@@ -262,6 +303,10 @@ function PagesView() {
 }
 
 function BlocksView() {
+  const { pages, activePageId, updateBlockType } = useEditor();
+  const activePage = pages.find(p => p.id === activePageId);
+  const blocks = activePage?.blocks || [];
+
   return (
     <div className="py-3">
       <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-sm font-medium border-b border-black/[0.04] dark:border-white/[0.04] mb-2">
@@ -269,15 +314,45 @@ function BlocksView() {
       </div>
       
       <div className="space-y-0.5">
-        {MOCK_PAGE_DATA.map((block, i) => {
-          const name = block.type.replace(/Variant\d+$/, "");
+        {blocks.map((block, i) => {
+          const match = block.type.match(/^(.*?)Variant(\d+)$/);
+          const baseName = match ? match[1] : block.type;
+          const currentVariant = match ? parseInt(match[2]) : 1;
+
+          // Define how many variants each block type has
+          let maxVariants = 1;
+          if (baseName === "Navbar") maxVariants = 3;
+          if (baseName === "FAQ") maxVariants = 4;
+          if (baseName === "CTA") maxVariants = 5;
+          if (baseName === "Footer") maxVariants = 5;
+
           return (
-            <TreeItem 
-              key={i}
-              icon={<Component className="w-3.5 h-3.5 text-purple-400" />} 
-              label={name} 
-              level={0} 
-            />
+            <div key={i} className="flex items-center w-full hover:bg-black/[0.04] dark:hover:bg-white/[0.04] px-3 py-1.5 group">
+              <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                <div className="w-3 h-3 flex items-center justify-center shrink-0 -ml-1"></div>
+                <div className="text-gray-600 dark:text-[#D8D8D6]/80 shrink-0 flex items-center justify-center">
+                  <Component className="w-3.5 h-3.5 text-purple-400" />
+                </div>
+                <span className="text-xs text-gray-600 dark:text-[#D8D8D6] truncate flex-1">{baseName}</span>
+              </div>
+              
+              {maxVariants > 1 && (
+                <div className="shrink-0 flex items-center gap-1">
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wide">Var</span>
+                  <select
+                    className="bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 rounded text-[10px] py-0.5 px-1 outline-none text-black dark:text-[#EFEEEA] cursor-pointer hover:border-black/20 dark:hover:border-white/20"
+                    value={currentVariant}
+                    onChange={(e) => {
+                      updateBlockType(activePageId, i, `${baseName}Variant${e.target.value}`);
+                    }}
+                  >
+                    {Array.from({ length: maxVariants }, (_, idx) => (
+                      <option key={idx + 1} value={idx + 1}>{idx + 1}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
@@ -307,6 +382,8 @@ export function PropertiesPanel() {
             backgroundColor: styles.backgroundColor,
             borderRadius: styles.borderRadius,
             boxShadow: styles.boxShadow,
+            paddingTop: styles.paddingTop,
+            paddingBottom: styles.paddingBottom,
           });
         }
       }, 0);
@@ -342,6 +419,69 @@ export function PropertiesPanel() {
         {activeTab === 1 && <BlocksView />}
         {activeTab === 2 && (
           <div className={`pb-8 transition-opacity duration-300 ${!selectedId ? 'opacity-30 pointer-events-none select-none' : ''}`}>
+            
+            {/* Navbar Specific Section */}
+            {selectedId?.startsWith("navbar-") && (
+              <Section title="Navbar Links">
+                <Row label="Link 1">
+                  <div className="flex flex-col gap-2 w-full">
+                    <Input 
+                      value={elementOverrides[`${selectedId}-link1`]?.content ?? "Features"} 
+                      onChange={(val) => updateOverride(`${selectedId}-link1`, { content: val })} 
+                      placeholder="Text"
+                    />
+                    <Input 
+                      value={elementOverrides[`${selectedId}-link1`]?.href ?? ""} 
+                      onChange={(val) => updateOverride(`${selectedId}-link1`, { href: val })} 
+                      placeholder="https://"
+                    />
+                  </div>
+                </Row>
+                <Row label="Link 2">
+                  <div className="flex flex-col gap-2 w-full">
+                    <Input 
+                      value={elementOverrides[`${selectedId}-link2`]?.content ?? "Pricing"} 
+                      onChange={(val) => updateOverride(`${selectedId}-link2`, { content: val })} 
+                      placeholder="Text"
+                    />
+                    <Input 
+                      value={elementOverrides[`${selectedId}-link2`]?.href ?? ""} 
+                      onChange={(val) => updateOverride(`${selectedId}-link2`, { href: val })} 
+                      placeholder="https://"
+                    />
+                  </div>
+                </Row>
+                <Row label="Link 3">
+                  <div className="flex flex-col gap-2 w-full">
+                    <Input 
+                      value={elementOverrides[`${selectedId}-link3`]?.content ?? "Docs"} 
+                      onChange={(val) => updateOverride(`${selectedId}-link3`, { content: val })} 
+                      placeholder="Text"
+                    />
+                    <Input 
+                      value={elementOverrides[`${selectedId}-link3`]?.href ?? ""} 
+                      onChange={(val) => updateOverride(`${selectedId}-link3`, { href: val })} 
+                      placeholder="https://"
+                    />
+                  </div>
+                </Row>
+                <Row label="CTA">
+                  <div className="flex flex-col gap-2 w-full">
+                    <Input 
+                      value={elementOverrides[`${selectedId}-cta-text`]?.content ?? "Get Started"} 
+                      onChange={(val) => updateOverride(`${selectedId}-cta-text`, { content: val })} 
+                      placeholder="Text"
+                    />
+                    <Input 
+                      value={elementOverrides[`${selectedId}-cta`]?.href ?? ""} 
+                      onChange={(val) => updateOverride(`${selectedId}-cta`, { href: val })} 
+                      placeholder="https://"
+                    />
+                  </div>
+                </Row>
+              </Section>
+            )}
+
             {/* Styles Section */}
             <Section title="Styles">
               <Row label={<><Plus className="h-3 w-3" /> Opacity</>}>
@@ -382,7 +522,7 @@ export function PropertiesPanel() {
               </Row>
               
               <Row label="Color">
-                <Input 
+                <ColorInput 
                   value={overrides.color ?? computedStyles.color ?? ""} 
                   onChange={(val) => handleUpdate({ color: val })} 
                 />
@@ -458,7 +598,7 @@ export function PropertiesPanel() {
             {/* Button Section */}
             <Section title="Button">
               <Row label={<><Plus className="h-3 w-3" /> Background</>}>
-                <Input 
+                <ColorInput 
                   value={overrides.backgroundColor ?? computedStyles.backgroundColor ?? ""} 
                   onChange={(val) => handleUpdate({ backgroundColor: val })} 
                 />
@@ -489,6 +629,42 @@ export function PropertiesPanel() {
                   value={overrides.href ?? ""} 
                   onChange={(val) => handleUpdate({ href: val })} 
                   placeholder="https://"
+                />
+              </Row>
+            </Section>
+
+            {/* Layout Section */}
+            <Section title="Layout">
+              <Row label={<><Plus className="h-3 w-3" /> Padding Top</>}>
+                <div className="flex items-center gap-2 w-full">
+                  <Input 
+                    value={overrides.paddingTop?.toString() ?? (computedStyles.paddingTop ? parseFloat(computedStyles.paddingTop).toString() : "0")} 
+                    onChange={(val) => {
+                      const num = parseInt(val);
+                      if (!isNaN(num)) handleUpdate({ paddingTop: num });
+                    }} 
+                    postfix="Px" 
+                  />
+                </div>
+              </Row>
+              
+              <Row label={<><Plus className="h-3 w-3" /> Padding Bottom</>}>
+                <div className="flex items-center gap-2 w-full">
+                  <Input 
+                    value={overrides.paddingBottom?.toString() ?? (computedStyles.paddingBottom ? parseFloat(computedStyles.paddingBottom).toString() : "0")} 
+                    onChange={(val) => {
+                      const num = parseInt(val);
+                      if (!isNaN(num)) handleUpdate({ paddingBottom: num });
+                    }} 
+                    postfix="Px" 
+                  />
+                </div>
+              </Row>
+              
+              <Row label={<><Plus className="h-3 w-3" /> Background</>}>
+                <ColorInput 
+                  value={overrides.backgroundColor ?? computedStyles.backgroundColor ?? ""} 
+                  onChange={(val) => handleUpdate({ backgroundColor: val })} 
                 />
               </Row>
             </Section>
