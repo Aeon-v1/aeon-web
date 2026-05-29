@@ -61,7 +61,7 @@ export function FooterVariant5({
   copyrightText = "© 2024 Aeon Web. All rights reserved.",
 }: FooterVariant5Props) {
   return (
-    <EditableSection id={id} as="section" className="py-32 bg-background font-sans">
+    <EditableSection id={id} as="section" className="py-16 md:py-32 bg-background font-sans">
       <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
         <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
