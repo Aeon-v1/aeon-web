@@ -57,9 +57,8 @@ export const BLOCK_SCHEMA: Record<string, BlockSchema> = {
 
   // ─── Logo Section ─────────────────────────────────────────────────────────
   LogoSectionVariant1: {
-    description: "A horizontal strip of brand/partner logos with a short headline.",
+    description: "A horizontal strip of brand/partner logos.",
     props: {
-      headline: { type: "string", required: false, example: "Trusted by teams at" },
       logos: {
         type: "array",
         required: false,

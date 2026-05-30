@@ -33,7 +33,7 @@ export function FAQVariant1({
 
   return (
     <EditableSection stableId="FAQVariant1-1" className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
-      <div className="max-w-3xl mx-auto px-4 md:px-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -51,7 +51,7 @@ export function FAQVariant1({
             as="p"
             defaultText={subtext}
             propName="subtext"
-            className="text-muted-foreground max-w-xl text-lg font-light"
+            className="text-muted-foreground max-w-2xl text-lg font-light"
           />
         </motion.div>
 

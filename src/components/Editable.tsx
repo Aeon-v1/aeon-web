@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useId } from "react";
 import { useEditor } from "./EditorProvider";
 import { BlockContext } from "./BlockRenderer";
+import { icons } from "lucide-react";
 
 export interface EditableProps extends React.HTMLAttributes<HTMLElement> {
   as?: React.ElementType;
@@ -385,11 +386,24 @@ export function EditableImage({
 
   // Determine the final source
   let finalSrc = overrides.src ?? src;
-  if (!finalSrc && fallbackQuery) {
-    finalSrc = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackQuery)}?width=800&height=600&nologo=true`;
-  }
-  
   const finalAlt = overrides.alt ?? alt;
+
+  if (!finalSrc) {
+    return (
+      <div
+        ref={elementRef as any}
+        className={`${finalClassName} bg-black/10 dark:bg-white/10 flex items-center justify-center relative overflow-hidden min-w-[40px] min-h-[40px] w-full h-full`}
+        style={dynamicStyles}
+        data-editable="true"
+        data-editable-id={id}
+        onClick={handleClick}
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+        {...(props as any)}
+      >
+      </div>
+    );
+  }
 
   return (
     <img
@@ -405,5 +419,80 @@ export function EditableImage({
       alt={finalAlt}
       {...props}
     />
+  );
+}
+
+export interface EditableIconProps extends React.HTMLAttributes<HTMLDivElement> {
+  name?: string;
+  id?: string;
+  stableId?: string;
+}
+
+export function EditableIcon({
+  name = "Box",
+  className = "",
+  id: explicitId,
+  stableId,
+  ...props
+}: EditableIconProps) {
+  const { selectedId, setSelectedId, hoveredId, setHoveredId, elementOverrides, isPreviewMode } = useEditor();
+  const blockId = React.useContext(BlockContext);
+  const generatedId = useId(); 
+  const id = explicitId ?? (blockId && stableId ? `${blockId}-${stableId}` : generatedId); 
+  
+  const isSelected = selectedId === id;
+  const overrides = elementOverrides[id] || {};
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    if (!isSelected) {
+      setSelectedId(id);
+    }
+  };
+
+  const handleMouseOver = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    setHoveredId(id);
+  };
+
+  const handleMouseOut = (e: React.MouseEvent) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    setHoveredId(null);
+  };
+
+  const dynamicStyles: React.CSSProperties = {
+    ...props.style,
+  };
+  
+  if (overrides.color) dynamicStyles.color = overrides.color;
+  if (overrides.opacity !== undefined) dynamicStyles.opacity = overrides.opacity;
+  if (overrides.visible === false) dynamicStyles.display = "none";
+
+  let finalClassName = className;
+  if (isSelected) {
+    finalClassName += " ring-2 ring-primary ring-offset-2 rounded-sm";
+  }
+
+  const finalIconName = overrides.iconName ?? name;
+  const LucideIcon = (icons as any)[finalIconName] || icons.Box;
+
+  return (
+    <div
+      ref={elementRef}
+      className={`inline-flex items-center justify-center shrink-0 ${finalClassName}`}
+      style={dynamicStyles}
+      data-editable="true"
+      data-editable-id={id}
+      onClick={handleClick}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      {...props}
+    >
+      <LucideIcon className="w-full h-full" />
+    </div>
   );
 }

@@ -16,7 +16,9 @@ import {
   ChevronRight,
   ChevronDown,
   Component,
-  Monitor
+  Monitor,
+  Square,
+  icons
 } from "lucide-react";
 
 import { MOCK_PAGE_DATA } from "@/data/mockPageData";
@@ -344,13 +346,18 @@ function BlocksView() {
           if (baseName === "FAQ") maxVariants = 4;
           if (baseName === "CTA") maxVariants = 5;
           if (baseName === "Footer") maxVariants = 5;
+          if (baseName === "Testimonial") maxVariants = 4;
+          if (baseName === "Contact") maxVariants = 2;
+          if (baseName === "LogoSection") maxVariants = 6;
+          if (baseName === "Feature") maxVariants = 5;
+          if (baseName === "HowItWorks") maxVariants = 2;
 
           return (
             <div key={i} className="flex items-center w-full hover:bg-black/[0.04] dark:hover:bg-white/[0.04] px-3 py-1.5 group">
               <div className="flex items-center gap-1.5 flex-1 min-w-0">
                 <div className="w-3 h-3 flex items-center justify-center shrink-0 -ml-1"></div>
                 <div className="text-gray-600 dark:text-[#D8D8D6]/80 shrink-0 flex items-center justify-center">
-                  <Component className="w-3.5 h-3.5 text-purple-400" />
+                  <Square className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                 </div>
                 <span className="text-[13px] text-gray-600 dark:text-[#D8D8D6] truncate flex-1">{baseName}</span>
               </div>
@@ -400,22 +407,42 @@ function GlobalView() {
           />
         </Row>
         <Row label="Weight">
-          <Input 
-            value={globalTheme.headingFontWeight ?? ""} 
-            onChange={(val) => handleUpdate({ headingFontWeight: val })} 
-            placeholder="e.g. 700 or bold"
-          />
+          <div className="relative w-full">
+            <select
+              value={globalTheme.headingFontWeight ?? ""}
+              onChange={(e) => handleUpdate({ headingFontWeight: e.target.value })}
+              className="w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] appearance-none focus:outline-none focus:border-black/[0.2] dark:focus:border-white/[0.2] transition-colors cursor-pointer"
+            >
+              <option value="">Default</option>
+              <option value="100">100 - Thin</option>
+              <option value="200">200 - Extra Light</option>
+              <option value="300">300 - Light</option>
+              <option value="400">400 - Normal</option>
+              <option value="500">500 - Medium</option>
+              <option value="600">600 - Semi Bold</option>
+              <option value="700">700 - Bold</option>
+              <option value="800">800 - Extra Bold</option>
+              <option value="900">900 - Black</option>
+            </select>
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600 dark:text-[#D8D8D6]/50">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </div>
+          </div>
         </Row>
         <Row label="Letter Spacing">
           <Input 
-            value={globalTheme.headingLetterSpacing ?? ""} 
-            onChange={(val) => handleUpdate({ headingLetterSpacing: val })} 
-            placeholder="e.g. -0.02em"
+            type="number"
+            step="0.01"
+            value={globalTheme.headingLetterSpacing ? parseFloat(globalTheme.headingLetterSpacing).toString() : ""} 
+            onChange={(val) => handleUpdate({ headingLetterSpacing: val ? `${val}em` : "" })} 
+            placeholder="e.g. -0.02"
           />
         </Row>
         <Row label="Line Height">
           <Input 
-            value={globalTheme.headingLineHeight ?? ""} 
+            type="number"
+            step="0.1"
+            value={globalTheme.headingLineHeight ? parseFloat(globalTheme.headingLineHeight).toString() : ""} 
             onChange={(val) => handleUpdate({ headingLineHeight: val })} 
             placeholder="e.g. 1.2"
           />
@@ -429,22 +456,42 @@ function GlobalView() {
           />
         </Row>
         <Row label="Weight">
-          <Input 
-            value={globalTheme.bodyFontWeight ?? ""} 
-            onChange={(val) => handleUpdate({ bodyFontWeight: val })} 
-            placeholder="e.g. 400 or normal"
-          />
+          <div className="relative w-full">
+            <select
+              value={globalTheme.bodyFontWeight ?? ""}
+              onChange={(e) => handleUpdate({ bodyFontWeight: e.target.value })}
+              className="w-full bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-md px-2.5 py-1.5 text-[13px] text-black dark:text-[#EFEEEA] appearance-none focus:outline-none focus:border-black/[0.2] dark:focus:border-white/[0.2] transition-colors cursor-pointer"
+            >
+              <option value="">Default</option>
+              <option value="100">100 - Thin</option>
+              <option value="200">200 - Extra Light</option>
+              <option value="300">300 - Light</option>
+              <option value="400">400 - Normal</option>
+              <option value="500">500 - Medium</option>
+              <option value="600">600 - Semi Bold</option>
+              <option value="700">700 - Bold</option>
+              <option value="800">800 - Extra Bold</option>
+              <option value="900">900 - Black</option>
+            </select>
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600 dark:text-[#D8D8D6]/50">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </div>
+          </div>
         </Row>
         <Row label="Letter Spacing">
           <Input 
-            value={globalTheme.bodyLetterSpacing ?? ""} 
-            onChange={(val) => handleUpdate({ bodyLetterSpacing: val })} 
-            placeholder="e.g. 0.01em"
+            type="number"
+            step="0.01"
+            value={globalTheme.bodyLetterSpacing ? parseFloat(globalTheme.bodyLetterSpacing).toString() : ""} 
+            onChange={(val) => handleUpdate({ bodyLetterSpacing: val ? `${val}em` : "" })} 
+            placeholder="e.g. 0.01"
           />
         </Row>
         <Row label="Line Height">
           <Input 
-            value={globalTheme.bodyLineHeight ?? ""} 
+            type="number"
+            step="0.1"
+            value={globalTheme.bodyLineHeight ? parseFloat(globalTheme.bodyLineHeight).toString() : ""} 
             onChange={(val) => handleUpdate({ bodyLineHeight: val })} 
             placeholder="e.g. 1.6"
           />
@@ -585,9 +632,91 @@ function ImageManager({ overrides, handleUpdate }: { overrides: Partial<TextProp
   );
 }
 
+const ALL_ICON_NAMES = Object.keys(icons).filter(name => typeof (icons as any)[name] === "object" || typeof (icons as any)[name] === "function");
+
+function PluginsView() {
+  const { selectedId, updateOverride } = useEditor();
+  const [activePlugin, setActivePlugin] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+
+  if (activePlugin === "lucide") {
+    const filteredIcons = ALL_ICON_NAMES.filter(name => name.toLowerCase().includes(search.toLowerCase())).slice(0, 60);
+
+    return (
+      <div className="py-3">
+        <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-[15px] font-medium border-b border-black/[0.04] dark:border-white/[0.04] mb-2">
+          <div className="flex items-center gap-2 cursor-pointer hover:opacity-70 transition-opacity" onClick={() => setActivePlugin(null)}>
+            <ChevronRight className="w-4 h-4 rotate-180 text-gray-500" />
+            <span>Lucide Icons</span>
+          </div>
+        </div>
+        <div className="px-4 flex flex-col gap-3">
+          {selectedId ? (
+            <div className="text-[12px] text-blue-500 bg-blue-500/10 p-2 rounded border border-blue-500/20 leading-relaxed">
+              Click an icon below to instantly apply it to your selected element.
+            </div>
+          ) : (
+            <div className="text-[12px] text-gray-500 bg-black/5 dark:bg-white/5 p-2 rounded border border-black/10 dark:border-white/10 leading-relaxed">
+              Select an icon on the canvas to update it.
+            </div>
+          )}
+          <Input 
+            value={search}
+            onChange={(val) => setSearch(val)}
+            placeholder="Search icons..."
+          />
+          <div className="grid grid-cols-5 gap-1.5 mt-1 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
+            {filteredIcons.map(name => {
+              const Icon = (icons as any)[name];
+              return (
+                <button
+                  key={name}
+                  title={name}
+                  onClick={() => {
+                    if (selectedId) updateOverride(selectedId, { iconName: name });
+                  }}
+                  className="aspect-square flex items-center justify-center rounded border border-black/5 dark:border-white/5 bg-white dark:bg-[#1c1c1a] hover:bg-black/5 dark:hover:bg-white/10 transition-colors group shadow-sm"
+                >
+                  <Icon className="w-5 h-5 text-gray-600 dark:text-[#D8D8D6] group-hover:scale-110 transition-transform" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Marketplace View
+  return (
+    <div className="py-3">
+      <div className="px-4 pb-2 flex items-center justify-between text-black dark:text-[#EFEEEA] text-[15px] font-medium border-b border-black/[0.04] dark:border-white/[0.04] mb-2">
+        <span>Installed Plugins</span>
+      </div>
+      <div className="px-4 space-y-2 pt-1">
+        <button 
+          onClick={() => setActivePlugin("lucide")}
+          className="w-full flex items-center justify-between p-3 rounded-lg border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group bg-white dark:bg-[#1c1c1a] shadow-sm"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded bg-gradient-to-tr from-rose-400 to-red-500 flex items-center justify-center text-white shrink-0 shadow-sm">
+              <Component className="w-4 h-4" />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[13px] font-medium text-black dark:text-[#EFEEEA]">Lucide Icons</span>
+              <span className="text-[11px] text-gray-500 mt-0.5">1,500+ standard icons</span>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function PropertiesPanel() {
   const { selectedId, elementOverrides, updateOverride, iframeDoc } = useEditor();
-  const [activeTab, setActiveTab] = useState(3); // 0: Pages, 1: Blocks, 2: Global, 3: Properties
+  const [activeTab, setActiveTab] = useState(3); // 0: Pages, 1: Blocks, 2: Global, 3: Properties, 4: Plugins
   const [computedStyles, setComputedStyles] = useState<Record<string, string>>({});
   const [selectedTagName, setSelectedTagName] = useState<string | null>(null);
 
@@ -637,7 +766,7 @@ export function PropertiesPanel() {
       {/* Panel Header */}
       <div className="p-3 border-b border-black/[0.06] dark:border-white/[0.06]">
         <ToggleGroup 
-          options={["Pages", "Blocks", "Global", "Props"]} 
+          options={["Pages", "Blocks", "Global", "Props", "Plugins"]} 
           activeIndex={activeTab} 
           onChange={setActiveTab}
         />
@@ -648,6 +777,7 @@ export function PropertiesPanel() {
         {activeTab === 0 && <PagesView />}
         {activeTab === 1 && <BlocksView />}
         {activeTab === 2 && <GlobalView />}
+        {activeTab === 4 && <PluginsView />}
         {activeTab === 3 && (
           <div className={`pb-8 transition-opacity duration-300 ${!selectedId ? 'opacity-30 pointer-events-none select-none' : ''}`}>
             

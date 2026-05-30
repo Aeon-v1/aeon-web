@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Zap, Code, Layout, Blocks } from "lucide-react";
-import { Editable, EditableSection, EditableImage } from "@/components/Editable";
+import { Editable, EditableSection, EditableImage, EditableIcon } from "@/components/Editable";
 
 export interface Feature {
   title: string;
@@ -40,17 +39,6 @@ const defaultFeatures: Feature[] = [
   },
 ];
 
-// Simple icon mapper
-function getIcon(name?: string) {
-  switch (name) {
-    case "Zap": return <Zap className="w-5 h-5" />;
-    case "Code": return <Code className="w-5 h-5" />;
-    case "Layout": return <Layout className="w-5 h-5" />;
-    case "Blocks": return <Blocks className="w-5 h-5" />;
-    default: return <Blocks className="w-5 h-5" />;
-  }
-}
-
   export function FeatureVariant1({
     headline = "Built for performance and scale.",
     subtext = "Everything you need to ship world-class landing pages without the overhead.",
@@ -80,7 +68,7 @@ function getIcon(name?: string) {
                   as="p"
                   defaultText={subtext}
                   propName="subtext"
-                  className="text-muted-foreground max-w-xl text-lg font-light leading-relaxed"
+                  className="text-muted-foreground max-w-2xl text-lg font-light leading-relaxed"
                 />
               </motion.div>
   
@@ -94,8 +82,8 @@ function getIcon(name?: string) {
                     transition={{ type: "spring", stiffness: 220, damping: 28, delay: i * 0.08 }}
                     className="flex flex-col gap-4 p-5 rounded-2xl bg-card border border-border hover:border-border/80 transition-colors"
                   >
-                    <div className="h-10 w-10 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground">
-                      {getIcon(feature.iconName)}
+                    <div className="h-10 w-10 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground shrink-0">
+                      <EditableIcon stableId={`FeatureVariant1-icon-${i}`} name={feature.iconName} className="w-5 h-5" />
                     </div>
                     <div>
                       <Editable stableId="FeatureVariant1-4"
@@ -125,9 +113,9 @@ function getIcon(name?: string) {
               className="relative w-full h-full min-h-[400px] lg:min-h-[600px] rounded-2xl border border-border/50 bg-muted/20 overflow-hidden flex items-center justify-center"
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent z-0" />
-              <div className="relative z-10 w-full h-full p-4 md:p-8">
+              <div className="relative z-10 w-full h-full">
                 <EditableImage stableId="FeatureVariant1-6"
-                  className="w-full h-full object-cover rounded-xl border border-border/50"
+                  className="w-full h-full object-cover"
                   fallbackQuery="abstract technology code geometric minimal"
                   alt="Feature showcase"
                 />

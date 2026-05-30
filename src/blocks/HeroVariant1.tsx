@@ -26,13 +26,13 @@ export function HeroVariant1({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 220, damping: 28 }}
-          className="space-y-6 max-w-3xl"
+          className="space-y-6 max-w-7xl"
         >
           <Editable stableId="HeroVariant1-2"
             as="h1"
             defaultText={headline}
             propName="headline"
-            className="text-5xl font-medium tracking-tighter sm:text-6xl md:text-7xl text-foreground"
+            className="text-5xl font-medium tracking-tighter sm:text-6xl md:text-[72px] text-foreground"
           />
           <Editable stableId="HeroVariant1-3"
             as="p"
@@ -57,10 +57,10 @@ export function HeroVariant1({
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 220, damping: 28, delay: 0.2 }}
-          className="mt-16 w-full max-w-5xl mx-auto rounded-xl border border-border/50 bg-background/50 p-2 backdrop-blur-sm"
+          className="mt-16 w-full max-w-5xl mx-auto rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm overflow-hidden"
         >
           <EditableImage stableId="HeroVariant1-6" 
-            className="w-full h-auto aspect-video rounded-lg object-cover bg-muted"
+            className="w-full h-auto aspect-video object-cover bg-muted"
             fallbackQuery="dashboard UI software startup dark mode"
             alt="Hero Dashboard"
           />

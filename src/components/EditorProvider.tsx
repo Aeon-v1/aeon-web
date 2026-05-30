@@ -206,14 +206,20 @@ export function EditorProvider({
   const [canvasTheme, setCanvasTheme] = useState<"light" | "dark">("light");
   const [globalTheme, setGlobalTheme] = useState<GlobalTheme>({});
   
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [syncStatus, setSyncStatus] = useState<"Synced" | "Saving..." | "Error">("Synced");
   const [isLoaded, setIsLoaded] = useState(isPublished);
   const [hasPaid, setHasPaid] = useState(false);
 
   // Load from Neon DB on mount
   useEffect(() => {
-    if (!user || isPublished) return;
+    if (authLoading) return; // Wait for auth to initialize
+    
+    if (!user || isPublished) {
+      setIsLoaded(true);
+      return;
+    }
+    
     fetch(`/api/sync?uid=${user.uid}`)
       .then(res => res.json())
       .then(data => {
@@ -227,7 +233,7 @@ export function EditorProvider({
         console.error("Failed to load from Neon", err);
         setIsLoaded(true);
       });
-  }, [user, isPublished]);
+  }, [user, authLoading, isPublished]);
 
   // Save to Neon DB on change (debounced)
   useEffect(() => {

@@ -39,8 +39,14 @@ You must respond ONLY with a valid JSON object matching this exact structure:
   ]
 }
 
-Allowed block types: NavbarVariant1, NavbarVariant2, NavbarVariant3, HeroVariant1, FeatureVariant1, TestimonialVariant1, FAQVariant1, CTAVariant1, CTAVariant2, CTAVariant3, CTAVariant4, CTAVariant5, FAQVariant2, FAQVariant3, FAQVariant4, FooterVariant1, FooterVariant2, FooterVariant3, FooterVariant4, FooterVariant5, HowItWorksVariant1, LogoSectionVariant1, PricingVariant1, StatVariant1, NewsletterVariant1.
-Do not include markdown blocks like \`\`\`json. Just output the raw JSON.`;
+- "TestimonialVariant1" (Standard testimonial)
+- "TestimonialVariant2" (Bento grid of testimonials with company logos)
+- "TestimonialVariant3" (Minimalist grid of testimonials with star ratings)
+- "TestimonialVariant4" (Animated timeline of testimonials for startups/enterprises)
+- "CTAVariant1" (Standard Call to action)
+
+Allowed block types: NavbarVariant1, NavbarVariant2, NavbarVariant3, HeroVariant1, FeatureVariant1, FeatureVariant2, FeatureVariant3, FeatureVariant4, FeatureVariant5, TestimonialVariant1, TestimonialVariant2, TestimonialVariant3, TestimonialVariant4, FAQVariant1, CTAVariant1, CTAVariant2, CTAVariant3, CTAVariant4, CTAVariant5, FAQVariant2, FAQVariant3, FAQVariant4, FooterVariant1, FooterVariant2, FooterVariant3, FooterVariant4, FooterVariant5, HowItWorksVariant1, HowItWorksVariant2, LogoSectionVariant1, LogoSectionVariant2, LogoSectionVariant3, LogoSectionVariant4, LogoSectionVariant5, PricingVariant1, StatVariant1, NewsletterVariant1, ContactVariant1, ContactVariant2.
+Do not include markdown blocks like ```json. Just output the raw JSON.`;
 
     const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
       method: "POST",

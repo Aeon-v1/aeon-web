@@ -39,8 +39,8 @@ export function NavbarVariant3({
         <EditableSection stableId="NavbarVariant3-1" id={id} as="header" className="sticky top-0 z-50 w-full">
             <nav
                 data-state={menuState && 'active'}
-                className="w-full px-2 bg-background/90 backdrop-blur-md border-b border-border">
-                <div className={cn('mx-auto max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'max-w-4xl lg:px-5')}>
+                className="w-full bg-background/90 backdrop-blur-md border-b border-border">
+                <div className={cn('mx-auto max-w-7xl px-4 md:px-6 transition-all duration-300', isScrolled && 'max-w-4xl lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 lg:gap-0 py-2">
                         <div className="flex w-full justify-between lg:w-auto">
                             <div

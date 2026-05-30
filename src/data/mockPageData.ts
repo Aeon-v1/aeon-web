@@ -21,17 +21,7 @@ export const MOCK_PAGE_DATA: BlockData[] = [
   },
   {
     type: "LogoSectionVariant1",
-    props: {
-      headline: "Trusted by teams at",
-      logos: [
-        { name: "Vercel" },
-        { name: "Linear" },
-        { name: "Notion" },
-        { name: "Stripe" },
-        { name: "Figma" },
-        { name: "Loom" },
-      ],
-    },
+    props: {},
   },
   {
     type: "StatVariant1",
@@ -133,6 +123,17 @@ export const MOCK_PAGE_DATA: BlockData[] = [
         { question: "Do I need to write code?", answer: "No. The Aeon AI generates the JSON payload. Aeon Web handles all the rendering automatically." },
         { question: "Which frameworks does it support?", answer: "Aeon Web is built on Next.js with the App Router and is fully compatible with modern React patterns." },
         { question: "Can I customize the fonts and colors?", answer: "Yes. The design system supports 40+ Google Fonts and a full Aeon color palette via CSS variables." },
+      ],
+    },
+  },
+  {
+    type: "ContactVariant1",
+    props: {
+      headline: "Have Questions? Get in Touch!",
+      contacts: [
+        { title: "Call Us Today!", value: "+1 (555) 123-4567", icon: "Phone" },
+        { title: "Send an Email", value: "mail@example.com", icon: "Mail" },
+        { title: "Visit Our Office", value: "100 Smith Street, VIC", icon: "MapPin" },
       ],
     },
   },

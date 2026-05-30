@@ -49,7 +49,7 @@ export function NewsletterVariant1({
 
   return (
     <EditableSection stableId="NewsletterVariant1-1" id={id} as="section" className="w-full py-16 md:py-24 bg-background text-foreground font-sans">
-      <div className="max-w-3xl mx-auto px-4 md:px-6 text-center">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 text-center">
         <Editable stableId="NewsletterVariant1-2"
           id={`${id}-headline`}
           as="h2"
@@ -65,7 +65,7 @@ export function NewsletterVariant1({
           className="text-lg text-muted-foreground mb-8"
         />
         
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto relative">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto relative">
           <input 
             type="email" 
             required

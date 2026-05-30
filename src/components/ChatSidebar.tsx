@@ -8,12 +8,7 @@ import { useEditor } from "./EditorProvider";
 import AIThinkingBlock from "./ui/ai-thinking-block";
 import { useAuth } from "./AuthProvider";
 import { useSearchParams } from "next/navigation";
-
-export interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-}
+import { useChat } from "@ai-sdk/react";
 
 // Keywords that indicate the user wants to generate a page
 const GENERATE_KEYWORDS = [
@@ -50,17 +45,32 @@ function generateReport(blocks: any[]): string {
 }
 
 export function ChatSidebar() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [currentPrompt, setCurrentPrompt] = useState("");
-  const { addGeneratedPage } = useEditor();
+  const { addGeneratedPage, pages, globalTheme, elementOverrides, setGlobalTheme, updateOverride } = useEditor();
   const { user } = useAuth();
   const userName = "Builder";
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
   const searchParams = useSearchParams();
   const initPrompt = searchParams.get("prompt");
+
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [currentPrompt, setCurrentPrompt] = useState("");
+
+  const { messages, setMessages, append, isLoading } = useChat({
+    api: "/api/chat",
+    body: {
+      state: { pages, globalTheme, elementOverrides }
+    },
+    onToolCall: ({ toolCall }) => {
+      if (toolCall.toolName === 'updateGlobalTheme') {
+         setGlobalTheme(prev => ({ ...prev, ...(toolCall.args as any) }));
+      }
+      if (toolCall.toolName === 'updateElementOverride') {
+         const { id, ...updates } = toolCall.args as any;
+         updateOverride(id, updates);
+      }
+      return "Action successful.";
+    }
+  });
 
   useEffect(() => {
     if (initPrompt && messages.length === 0) {
@@ -77,29 +87,27 @@ export function ChatSidebar() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isGenerating]);
 
   const handleSendMessage = useCallback(async (text: string) => {
-    if (!text.trim() || isLoading) return;
-
-    const userMsg: Message = { id: Date.now().toString(), role: "user", content: text };
-    const assistantMsgId = (Date.now() + 1).toString();
-
-    setMessages(prev => [...prev, userMsg]);
-    setIsLoading(true);
+    if (!text.trim() || isLoading || isGenerating) return;
 
     // ── Branch: Page Generation ──────────────────────────────────────────────
     if (isGenerateRequest(text)) {
       setIsGenerating(true);
       setCurrentPrompt(text);
+      
+      const userMsgId = Date.now().toString();
+      const assistantMsgId = (Date.now() + 1).toString();
+      setMessages(prev => [...prev, { id: userMsgId, role: "user", content: text }]);
 
       try {
-        const token = await user?.getIdToken();
-        const res = await fetch("http://localhost:3000/api/generate", {
+        const token = await user?.getIdToken().catch(() => null);
+        const res = await fetch("/api/generate", {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            "Authorization": token ? `Bearer ${token}` : ""
           },
           body: JSON.stringify({ prompt: text }),
         });
@@ -130,59 +138,14 @@ export function ChatSidebar() {
           content: "⚠️ Failed to connect to the generation API. Check your API key." 
         }]);
       } finally {
-        setIsLoading(false);
         setIsGenerating(false);
       }
       return;
     }
 
-    // ── Branch: Conversational Chat ──────────────────────────────────────────
-    const chatHistory = [...messages, userMsg].map(({ role, content }) => ({ role, content }));
-
-    // Create a placeholder assistant message to stream into
-    setMessages(prev => [...prev, { id: assistantMsgId, role: "assistant", content: "" }]);
-
-    try {
-      abortControllerRef.current = new AbortController();
-      const token = await user?.getIdToken();
-      const response = await fetch("http://localhost:3000/api/chat", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ messages: chatHistory }),
-        signal: abortControllerRef.current.signal,
-      });
-
-      if (!response.ok || !response.body) {
-        const err = await response.json().catch(() => ({ error: "Unknown error" }));
-        setMessages(prev => prev.map(m => m.id === assistantMsgId ? { ...m, content: `⚠️ ${err.error || "Failed to get a response."}` } : m));
-        return;
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        setMessages(prev => prev.map(m =>
-          m.id === assistantMsgId ? { ...m, content: m.content + chunk } : m
-        ));
-
-      }
-    } catch (error: any) {
-      if (error.name !== "AbortError") {
-        setMessages(prev => prev.map(m =>
-          m.id === assistantMsgId ? { ...m, content: "⚠️ Failed to connect to AI. Please check your API key." } : m
-        ));
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isLoading, messages]);
+    // ── Branch: Conversational Chat / Agentic Editing ────────────────────────
+    append({ role: "user", content: text });
+  }, [isLoading, isGenerating, user, addGeneratedPage, append, setMessages]);
 
   return (
     <div className="flex flex-col h-full bg-[#FDFDFC] dark:bg-[#1F1F1E] w-full lg:w-[25%] relative shrink-0 z-40 pointer-events-auto transition-colors duration-300">
@@ -191,7 +154,7 @@ export function ChatSidebar() {
           <button 
             onClick={() => {
               const callbackUrl = encodeURIComponent("http://localhost:3001/auth/callback");
-              window.location.href = `http://localhost:3000/login?redirect=${callbackUrl}`;
+              window.location.href = `/login?redirect=${callbackUrl}`;
             }}
             className="px-3 py-1.5 text-[13px] font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm cursor-pointer"
           >
@@ -245,18 +208,18 @@ export function ChatSidebar() {
             {/* Scrollable messages thread */}
             <main className="flex-1 w-full max-w-xl mx-auto px-4 pb-6 pt-8 flex flex-col space-y-6 md:space-y-8 overflow-y-auto scrollbar-none custom-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {messages.map((msg) => (
-                <ChatMessageItem key={msg.id} msg={msg} />
+                <ChatMessageItem key={msg.id} msg={msg as any} />
               ))}
 
               {/* Page Generation Thinking Block */}
-              {isLoading && isGenerating && (
+              {isGenerating && (
                  <div className="flex w-full animate-in fade-in duration-300 pb-8">
                     <AIThinkingBlock prompt={currentPrompt} />
                  </div>
               )}
 
-              {/* Thinking indicator — shows only while loading before first chunk arrives */}
-              {isLoading && !isGenerating && messages[messages.length - 1]?.content === "" && (
+              {/* Thinking indicator */}
+              {isLoading && !isGenerating && messages[messages.length - 1]?.role !== "assistant" && (
                 <div className="flex flex-col space-y-4 w-full">
                   <div className="flex items-start gap-2.5 w-full pr-6 pl-1 animate-in fade-in duration-300">
                     <div className="h-5 w-5 rounded-md flex items-center justify-center border shrink-0 bg-black/5 dark:bg-[#2C2C2A] border-black/[0.04] dark:border-white/[0.03]">
@@ -266,12 +229,7 @@ export function ChatSidebar() {
                       </span>
                     </div>
                     <div className="px-4 py-2 rounded-2xl text-[13px] md:text-[15px] font-sans flex items-center gap-1.5 shadow-sm bg-white dark:bg-[#181817] border border-black/[0.04] dark:border-white/[0.03] text-neutral-500 dark:text-neutral-400 transition-colors duration-300">
-                      <span>Generating response</span>
-                      <span className="flex items-center gap-0.5 ml-0.5 mt-1">
-                        <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:-0.3s]" />
-                        <span className="w-1 h-1 rounded-full bg-current animate-bounce [animation-delay:-0.15s]" />
-                        <span className="w-1 h-1 rounded-full bg-current animate-bounce" />
-                      </span>
+                      <span>Applying changes...</span>
                     </div>
                   </div>
                 </div>

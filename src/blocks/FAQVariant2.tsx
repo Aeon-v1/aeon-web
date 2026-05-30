@@ -35,7 +35,7 @@ export function FAQVariant2({
 }: FAQVariant2Props) {
   return (
     <EditableSection stableId="FAQVariant2-1" id={id} className="bg-background py-16 md:py-24 font-sans">
-      <div className="mx-auto max-w-5xl px-4 md:px-6">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div>
           <Editable stableId="FAQVariant2-2"
             id={`${id}-headline`}

@@ -48,7 +48,7 @@ export function CTAVariant5({
 
   return (
     <EditableSection stableId="CTAVariant5-1" id={id} as="section" className="py-16 md:py-24 bg-background font-sans">
-      <div className="mx-auto max-w-5xl p-6 sm:p-8 flex flex-col items-center gap-6 text-center">
+      <div className="mx-auto max-w-7xl p-6 sm:p-8 flex flex-col items-center gap-6 text-center">
         <Editable stableId="CTAVariant5-2"
           id={`${id}-headline`}
           as="h2"
@@ -74,7 +74,7 @@ export function CTAVariant5({
                 if ((e.target as HTMLElement).closest('[data-editable]')) return;
                 form.handleSubmit(onSubmit)(e);
             }}
-            className="mt-8 flex w-full max-w-md flex-col sm:flex-row items-center justify-center gap-3"
+            className="mt-8 flex w-full max-w-2xl flex-col sm:flex-row items-center justify-center gap-3"
           >
             <FormField
               control={form.control}

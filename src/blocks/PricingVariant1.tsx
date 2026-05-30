@@ -78,12 +78,12 @@ export function PricingVariant1({
               as="p"
               defaultText={subtext}
               propName="subtext"
-              className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-light mx-auto"
+              className="max-w-3xl text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed font-light mx-auto"
             />
           </div>
         </motion.div>
         
-        <div className="mx-auto grid max-w-5xl items-stretch gap-6 py-12 md:py-16 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <div className="mx-auto grid max-w-7xl items-stretch gap-6 py-12 md:py-16 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}

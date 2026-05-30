@@ -36,7 +36,7 @@ export function FAQVariant3({
 }: FAQVariant3Props) {
     return (
         <EditableSection stableId="FAQVariant3-1" id={id} className="py-16 md:py-24 bg-background font-sans">
-            <div className="mx-auto max-w-5xl px-6">
+            <div className="mx-auto max-w-7xl px-6">
                 <div className="grid gap-8 md:grid-cols-5 md:gap-12">
                     <div className="md:col-span-2">
                         <Editable stableId="FAQVariant3-2"

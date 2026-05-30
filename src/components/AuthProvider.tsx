@@ -31,8 +31,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Automatically sign in anonymously for the builder if not logged in
         try {
           await signInAnonymously(auth);
-        } catch (error) {
-          console.error("Anonymous auth failed", error);
+        } catch (error: any) {
+          if (error.code === 'auth/network-request-failed') {
+            console.warn("Network request failed during anonymous auth (offline or firewall). Continuing without auth.");
+          } else {
+            console.error("Anonymous auth failed", error);
+          }
         }
       }
       setLoading(false);

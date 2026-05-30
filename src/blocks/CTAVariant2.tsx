@@ -21,7 +21,7 @@ export function CTAVariant2({
 }: CTAVariant2Props) {
   return (
     <EditableSection stableId="CTAVariant2-1" id={id} as="section" className="w-full bg-background font-sans py-24">
-      <div className="relative mx-auto flex w-full max-w-3xl flex-col justify-between gap-y-6 border-y border-border bg-[radial-gradient(35%_80%_at_25%_0%,--theme(--color-foreground/.08),transparent)] px-4 py-8">
+      <div className="relative mx-auto flex w-full max-w-7xl flex-col justify-between gap-y-6 border-y border-border bg-[radial-gradient(35%_80%_at_25%_0%,--theme(--color-foreground/.08),transparent)] px-4 py-8">
         <PlusIcon
           className="absolute top-[-12.5px] left-[-11.5px] z-1 size-6 text-muted-foreground"
           strokeWidth={1}

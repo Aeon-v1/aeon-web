@@ -52,8 +52,9 @@ function Initials({ name }: { name?: string }) {
 export function TestimonialVariant1({
   headline = "Trusted by builders worldwide",
   subtext = "Don't take our word for it.",
-  testimonials = defaultTestimonials,
+  testimonials: _testimonials = defaultTestimonials,
 }: TestimonialVariant1Props) {
+  const testimonials = (!_testimonials || _testimonials.length === 0) ? defaultTestimonials : _testimonials;
   return (
     <EditableSection stableId="TestimonialVariant1-1" className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
@@ -74,7 +75,7 @@ export function TestimonialVariant1({
             as="p"
             defaultText={subtext}
             propName="subtext"
-            className="text-muted-foreground max-w-xl text-lg font-light"
+            className="text-muted-foreground max-w-2xl text-lg font-light"
           />
         </motion.div>
 

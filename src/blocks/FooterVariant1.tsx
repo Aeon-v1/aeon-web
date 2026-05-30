@@ -54,7 +54,7 @@ export function FooterVariant1({
             <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 md:justify-end">
               {links.map((link, index) => (
                 <a
-                  key={link.label}
+                  key={`${link.label}-${index}`}
                   href={link.href}
                   className="text-sm font-light text-muted-foreground transition-colors hover:text-foreground"
                 >

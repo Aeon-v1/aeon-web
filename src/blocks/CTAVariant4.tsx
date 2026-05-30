@@ -128,7 +128,7 @@ export function CTAVariant4({
       <div className="w-full max-w-7xl animate-fade-in-up">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           {/* Left Content */}
-          <div className="space-y-8 max-w-xl">
+          <div className="space-y-8 max-w-2xl">
             <Editable stableId="CTAVariant4-2"
               id={`${id}-headline`}
               as="h1"

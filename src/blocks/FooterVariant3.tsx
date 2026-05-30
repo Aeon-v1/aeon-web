@@ -24,7 +24,7 @@ export function FooterVariant3({
 }: FooterVariant3Props) {
   return (
     <EditableSection stableId="FooterVariant3-1" id={id} as="footer" className="bg-muted py-16 font-sans">
-      <div className="mx-auto max-w-5xl px-6">
+      <div className="mx-auto max-w-7xl px-6">
         <a href="/" aria-label="go home" className="mx-auto block size-fit"></a>
 
         <div className="my-8 flex flex-wrap justify-center gap-6">

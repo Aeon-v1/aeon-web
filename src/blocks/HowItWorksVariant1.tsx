@@ -59,7 +59,7 @@ export function HowItWorksVariant1({
           />
         </motion.div>
 
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-7xl mx-auto">
           {/* Connecting line */}
           <div className="absolute top-8 left-8 right-8 h-[1px] bg-border hidden md:block" />
 

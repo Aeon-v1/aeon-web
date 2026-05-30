@@ -31,7 +31,7 @@ export function CTAVariant3({
     <EditableSection stableId="CTAVariant3-1" id={id} as="section" className="py-16 md:py-32 font-sans bg-background">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-center">
-          <div className="max-w-5xl w-full">
+          <div className="max-w-7xl w-full">
             <div className="flex flex-col items-start justify-between gap-8 rounded-lg bg-muted px-6 py-10 md:flex-row lg:px-20 lg:py-16">
               <div className="md:w-1/2">
                 <Editable stableId="CTAVariant3-2"

@@ -1,56 +1,76 @@
 "use client";
 
-import * as React from "react";
-import { motion } from "framer-motion";
 import { Editable, EditableSection } from "@/components/Editable";
 
-export interface Logo {
-  name: string;
+export interface LogoItem {
+  src: string;
+  alt: string;
 }
 
 export interface LogoSectionVariant1Props {
-  headline?: string;
-  logos?: Logo[];
+  id?: string;
+  logos?: LogoItem[];
 }
 
-const defaultLogos: Logo[] = [
-  { name: "Vercel" },
-  { name: "Linear" },
-  { name: "Notion" },
-  { name: "Stripe" },
-  { name: "Figma" },
-  { name: "Loom" },
+const defaultLogos: LogoItem[] = [
+  {
+    src: "https://storage.efferd.com/logo/nvidia-wordmark.svg",
+    alt: "Nvidia Logo",
+  },
+  {
+    src: "https://storage.efferd.com/logo/supabase-wordmark.svg",
+    alt: "Supabase Logo",
+  },
+  {
+    src: "https://storage.efferd.com/logo/openai-wordmark.svg",
+    alt: "OpenAI Logo",
+  },
+  {
+    src: "https://storage.efferd.com/logo/turso-wordmark.svg",
+    alt: "Turso Logo",
+  },
+  {
+    src: "https://storage.efferd.com/logo/vercel-wordmark.svg",
+    alt: "Vercel Logo",
+  },
+  {
+    src: "https://storage.efferd.com/logo/github-wordmark.svg",
+    alt: "GitHub Logo",
+  },
+  {
+    src: "https://storage.efferd.com/logo/claude-wordmark.svg",
+    alt: "Claude AI Logo",
+  },
+  {
+    src: "https://storage.efferd.com/logo/clerk-wordmark.svg",
+    alt: "Clerk Logo",
+  },
 ];
 
 export function LogoSectionVariant1({
-  headline = "Trusted by teams at",
-  logos = defaultLogos,
+  id = "logo-2",
+  logos: _logos = defaultLogos,
 }: LogoSectionVariant1Props) {
-  return (
-    <EditableSection stableId="LogoSectionVariant1-1" className="w-full py-16 bg-background font-sans border-y border-border">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col items-center gap-8">
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center text-xs font-mono uppercase tracking-widest text-muted-foreground/50 mb-10"
-        >
-          <Editable stableId="LogoSectionVariant1-2" as="span" defaultText={headline} propName="headline" inline />
-        </motion.p>
+  const logos = (!_logos || _logos.length === 0) ? defaultLogos : _logos;
 
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-          {logos.map((logo, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 6 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ type: "spring", stiffness: 220, damping: 28, delay: i * 0.06 }}
-              className="text-muted-foreground/50 hover:text-foreground transition-colors duration-300 text-lg font-medium tracking-tight select-none"
+  return (
+    <EditableSection stableId="LogoSectionVariant1-1" id={id} as="section" className="py-24 bg-background font-sans">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="grid grid-cols-2 rounded-lg bg-border shadow md:grid-cols-4">
+          {logos.map((logo, idx) => (
+            <div
+              className="flex items-center justify-center rounded-lg border border-border bg-background p-8 transition-colors hover:bg-muted/20"
+              key={idx}
             >
-              <Editable stableId="LogoSectionVariant1-3" as="span" defaultText={logo.name} propName={`logos[${i}].name`} inline />
-            </motion.div>
+              <img
+                alt={logo.alt}
+                className="pointer-events-none block h-4 select-none md:h-5 dark:brightness-0 dark:invert"
+                height="auto"
+                loading="lazy"
+                src={logo.src}
+                width="auto"
+              />
+            </div>
           ))}
         </div>
       </div>

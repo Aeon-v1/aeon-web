@@ -36,7 +36,7 @@ export function StatVariant1({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 220, damping: 28 }}
-            className="flex flex-col space-y-4 max-w-lg"
+            className="flex flex-col space-y-4 max-w-2xl"
           >
             <Editable stableId="StatVariant1-2"
               as="h2"
