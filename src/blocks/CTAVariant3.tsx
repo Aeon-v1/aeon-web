@@ -28,20 +28,20 @@ export function CTAVariant3({
   items = defaultItems,
 }: CTAVariant3Props) {
   return (
-    <EditableSection id={id} as="section" className="py-16 md:py-32 font-sans bg-background">
+    <EditableSection stableId="CTAVariant3-1" id={id} as="section" className="py-16 md:py-32 font-sans bg-background">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-center">
           <div className="max-w-5xl w-full">
             <div className="flex flex-col items-start justify-between gap-8 rounded-lg bg-muted px-6 py-10 md:flex-row lg:px-20 lg:py-16">
               <div className="md:w-1/2">
-                <Editable
+                <Editable stableId="CTAVariant3-2"
                   id={`${id}-headline`}
                   as="h4"
                   defaultText={headline}
                   propName="headline"
                   className="mb-1 text-2xl font-bold md:text-3xl text-foreground"
                 />
-                <Editable
+                <Editable stableId="CTAVariant3-3"
                   id={`${id}-subtext`}
                   as="p"
                   defaultText={subtext}
@@ -49,11 +49,11 @@ export function CTAVariant3({
                   className="text-muted-foreground mt-4"
                 />
                 <div className="mt-6">
-                  <EditableButton
+                  <EditableButton stableId="CTAVariant3-4"
                     id={`${id}-primary-btn`}
                     className="inline-flex w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-11 sm:h-10 px-6 sm:px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
                   >
-                    <Editable
+                    <Editable stableId="CTAVariant3-5"
                       id={`${id}-primary-btn-text`}
                       as="span"
                       defaultText={buttonText}
@@ -69,7 +69,7 @@ export function CTAVariant3({
                   {items.map((item, idx) => (
                     <li className="flex items-center" key={idx}>
                       <Check className="mr-4 size-4 flex-shrink-0 text-primary" />
-                      <Editable
+                      <Editable stableId="CTAVariant3-6"
                         id={`${id}-item-${idx}`}
                         as="span"
                         defaultText={item}

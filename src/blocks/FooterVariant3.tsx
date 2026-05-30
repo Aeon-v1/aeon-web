@@ -23,7 +23,7 @@ export function FooterVariant3({
   copyrightText = "© 2024 Aeon Web, All rights reserved",
 }: FooterVariant3Props) {
   return (
-    <EditableSection id={id} as="footer" className="bg-muted py-16 font-sans">
+    <EditableSection stableId="FooterVariant3-1" id={id} as="footer" className="bg-muted py-16 font-sans">
       <div className="mx-auto max-w-5xl px-6">
         <a href="/" aria-label="go home" className="mx-auto block size-fit"></a>
 
@@ -55,7 +55,7 @@ export function FooterVariant3({
         </div>
         
         <span className="text-muted-foreground block text-center text-sm">
-          <Editable
+          <Editable stableId="FooterVariant3-2"
             id={`${id}-copyright`}
             as="span"
             defaultText={copyrightText}

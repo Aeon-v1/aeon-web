@@ -34,17 +34,17 @@ export function FAQVariant2({
   contactLinkText = "customer support team",
 }: FAQVariant2Props) {
   return (
-    <EditableSection id={id} className="bg-background py-16 md:py-24 font-sans">
+    <EditableSection stableId="FAQVariant2-1" id={id} className="bg-background py-16 md:py-24 font-sans">
       <div className="mx-auto max-w-5xl px-4 md:px-6">
         <div>
-          <Editable
+          <Editable stableId="FAQVariant2-2"
             id={`${id}-headline`}
             as="h2"
             defaultText={headline}
             propName="headline"
             className="text-foreground text-4xl font-bold tracking-tight"
           />
-          <Editable
+          <Editable stableId="FAQVariant2-3"
             id={`${id}-subtext`}
             as="p"
             defaultText={subtext}
@@ -72,7 +72,7 @@ export function FAQVariant2({
                     }
                 }} className="w-full">
                     <AccordionTrigger className="cursor-pointer text-base hover:no-underline text-foreground">
-                        <Editable
+                        <Editable stableId="FAQVariant2-4"
                             id={`${id}-faq-${i}-q`}
                             as="span"
                             defaultText={item.question}
@@ -82,7 +82,7 @@ export function FAQVariant2({
                     </AccordionTrigger>
                 </div>
                 <AccordionContent>
-                  <Editable
+                  <Editable stableId="FAQVariant2-5"
                     id={`${id}-faq-${i}-a`}
                     as="p"
                     defaultText={item.answer}
@@ -95,7 +95,7 @@ export function FAQVariant2({
           </Accordion>
 
           <div className="text-muted-foreground mt-6 flex items-center gap-1 flex-wrap">
-            <Editable
+            <Editable stableId="FAQVariant2-6"
               id={`${id}-contact-text`}
               as="span"
               defaultText={contactText}
@@ -106,7 +106,7 @@ export function FAQVariant2({
               href="#"
               className="text-primary font-medium hover:underline"
             >
-              <Editable
+              <Editable stableId="FAQVariant2-7"
                 id={`${id}-contact-link-text`}
                 as="span"
                 defaultText={contactLinkText}

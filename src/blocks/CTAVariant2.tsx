@@ -20,7 +20,7 @@ export function CTAVariant2({
   secondaryButtonText = "Contact Sales",
 }: CTAVariant2Props) {
   return (
-    <EditableSection id={id} as="section" className="w-full bg-background font-sans py-24">
+    <EditableSection stableId="CTAVariant2-1" id={id} as="section" className="w-full bg-background font-sans py-24">
       <div className="relative mx-auto flex w-full max-w-3xl flex-col justify-between gap-y-6 border-y border-border bg-[radial-gradient(35%_80%_at_25%_0%,--theme(--color-foreground/.08),transparent)] px-4 py-8">
         <PlusIcon
           className="absolute top-[-12.5px] left-[-11.5px] z-1 size-6 text-muted-foreground"
@@ -45,14 +45,14 @@ export function CTAVariant2({
         <div className="-z-10 absolute top-0 left-1/2 h-full border-l border-dashed border-border" />
 
         <div className="space-y-1">
-          <Editable
+          <Editable stableId="CTAVariant2-2"
             id={`${id}-headline`}
             as="h2"
             defaultText={headline}
             propName="headline"
             className="text-center font-bold text-2xl text-foreground"
           />
-          <Editable
+          <Editable stableId="CTAVariant2-3"
             id={`${id}-subtext`}
             as="p"
             defaultText={subtext}
@@ -62,11 +62,11 @@ export function CTAVariant2({
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <EditableButton
+          <EditableButton stableId="CTAVariant2-4"
             id={`${id}-secondary-btn`}
             className="inline-flex w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-11 sm:h-10 px-6 sm:px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer text-foreground"
           >
-            <Editable
+            <Editable stableId="CTAVariant2-5"
               id={`${id}-secondary-btn-text`}
               as="span"
               defaultText={secondaryButtonText}
@@ -74,11 +74,11 @@ export function CTAVariant2({
               inline
             />
           </EditableButton>
-          <EditableButton
+          <EditableButton stableId="CTAVariant2-6"
             id={`${id}-primary-btn`}
             className="inline-flex w-full sm:w-auto items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-11 sm:h-10 px-6 sm:px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
           >
-            <Editable
+            <Editable stableId="CTAVariant2-7"
               id={`${id}-primary-btn-text`}
               as="span"
               defaultText={primaryButtonText}

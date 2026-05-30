@@ -6,6 +6,7 @@ import { useEditor } from "./EditorProvider";
 
 export function IframePreview({ children }: { children: React.ReactNode }) {
   const [iframeDocument, setIframeDocument] = useState<Document | null>(null);
+  const [isIframeReady, setIsIframeReady] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { setIframeDoc, canvasTheme, globalTheme } = useEditor();
 
@@ -25,9 +26,27 @@ export function IframePreview({ children }: { children: React.ReactNode }) {
           }
         });
         
+        let linksToLoad = 0;
         styles.forEach(style => {
-          doc.head.appendChild(style.cloneNode(true));
+          const clone = style.cloneNode(true) as HTMLElement;
+          if (clone.tagName === 'LINK') {
+            linksToLoad++;
+            clone.onload = () => {
+              linksToLoad--;
+              if (linksToLoad === 0) setIsIframeReady(true);
+            };
+            clone.onerror = () => {
+              linksToLoad--;
+              if (linksToLoad === 0) setIsIframeReady(true);
+            };
+          }
+          doc.head.appendChild(clone);
         });
+        
+        if (linksToLoad === 0) {
+          // If only <style> tags were copied, or no links, it's ready immediately
+          setTimeout(() => setIsIframeReady(true), 50);
+        }
         
         // Ensure our custom styles stay at the end
         const themeStyle = doc.getElementById('global-theme-style');
@@ -145,7 +164,14 @@ export function IframePreview({ children }: { children: React.ReactNode }) {
 
     let cssVars = '';
     if (globalTheme.headingFont) cssVars += `--font-heading: "${globalTheme.headingFont}", sans-serif;\n`;
+    if (globalTheme.headingFontWeight) cssVars += `--font-heading-weight: ${globalTheme.headingFontWeight};\n`;
+    if (globalTheme.headingLetterSpacing) cssVars += `--font-heading-letter-spacing: ${globalTheme.headingLetterSpacing};\n`;
+    if (globalTheme.headingLineHeight) cssVars += `--font-heading-line-height: ${globalTheme.headingLineHeight};\n`;
+    
     if (globalTheme.bodyFont) cssVars += `--font-body: "${globalTheme.bodyFont}", sans-serif;\n`;
+    if (globalTheme.bodyFontWeight) cssVars += `--font-body-weight: ${globalTheme.bodyFontWeight};\n`;
+    if (globalTheme.bodyLetterSpacing) cssVars += `--font-body-letter-spacing: ${globalTheme.bodyLetterSpacing};\n`;
+    if (globalTheme.bodyLineHeight) cssVars += `--font-body-line-height: ${globalTheme.bodyLineHeight};\n`;
     if (globalTheme.primaryColor) {
       cssVars += `--primary: ${globalTheme.primaryColor};\n`;
       cssVars += `--hu-primary: ${hexToHsl(globalTheme.primaryColor)};\n`;
@@ -172,8 +198,9 @@ export function IframePreview({ children }: { children: React.ReactNode }) {
   return (
     <iframe
       ref={iframeRef}
+      src="about:blank"
       onLoad={handleLoad}
-      className="w-full h-full border-none bg-background transition-colors duration-300 rounded-lg"
+      className={`w-full h-full border-none bg-background transition-opacity duration-300 rounded-lg ${isIframeReady ? 'opacity-100' : 'opacity-0'}`}
       title="Canvas Preview"
     >
       {iframeDocument && createPortal(children, iframeDocument.body)}

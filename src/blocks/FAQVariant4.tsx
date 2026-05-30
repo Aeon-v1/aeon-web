@@ -220,7 +220,7 @@ export function FAQVariant4({
     : faqs.map((item, originalIndex) => ({ ...item, originalIndex }));
 
   return (
-    <EditableSection
+    <EditableSection stableId="FAQVariant4-1"
       id={id}
       className="relative w-full overflow-hidden text-foreground bg-background font-sans"
     >
@@ -236,14 +236,14 @@ export function FAQVariant4({
         {/* Header */}
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-6 gap-6">
           <div>
-            <Editable
+            <Editable stableId="FAQVariant4-2"
               id={`${id}-headline`}
               as="h1"
               defaultText={headline}
               propName="headline"
               className="text-4xl md:text-6xl font-bold tracking-tight"
             />
-            <Editable
+            <Editable stableId="FAQVariant4-3"
               id={`${id}-subtext`}
               as="p"
               defaultText={subtext}
@@ -279,7 +279,7 @@ export function FAQVariant4({
 
         {/* Footer */}
         <footer className="mt-16 border-t border-border pt-6 text-xs text-muted-foreground">
-          <Editable
+          <Editable stableId="FAQVariant4-4"
             id={`${id}-footer-text`}
             as="span"
             defaultText={footerText}
@@ -366,7 +366,7 @@ function FAQItem({
       >
         <div className="flex items-baseline gap-3 w-full pr-4">
           <span className="text-xs text-muted-foreground">{String(displayIndex).padStart(2, "0")}</span>
-          <Editable
+          <Editable stableId="FAQVariant4-5"
             id={`${rootId}-faq-${originalIndex}-q`}
             as="h3"
             defaultText={q}
@@ -383,7 +383,7 @@ function FAQItem({
         className={`grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(.4,0,.2,1)] ${open ? "mt-3 grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
         <div className="min-h-0 overflow-hidden">
-          <Editable
+          <Editable stableId="FAQVariant4-6"
             id={`${rootId}-faq-${originalIndex}-a`}
             as="p"
             defaultText={a}

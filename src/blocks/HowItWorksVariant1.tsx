@@ -36,7 +36,7 @@ export function HowItWorksVariant1({
   steps = defaultSteps,
 }: HowItWorksVariant1Props) {
   return (
-    <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
+    <EditableSection stableId="HowItWorksVariant1-1" className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -45,13 +45,13 @@ export function HowItWorksVariant1({
           transition={{ type: "spring", stiffness: 220, damping: 28 }}
           className="flex flex-col items-center text-center space-y-4 mb-20"
         >
-          <Editable
+          <Editable stableId="HowItWorksVariant1-2"
             as="h2"
             defaultText={headline}
             propName="headline"
             className="text-3xl md:text-5xl font-medium tracking-tighter text-foreground"
           />
-          <Editable
+          <Editable stableId="HowItWorksVariant1-3"
             as="p"
             defaultText={subtext}
             propName="subtext"
@@ -77,13 +77,13 @@ export function HowItWorksVariant1({
                   0{i + 1}
                 </div>
                 <div>
-                  <Editable
+                  <Editable stableId="HowItWorksVariant1-4"
                     as="h3"
                     defaultText={step.title}
                     propName={`steps[${i}].title`}
                     className="text-xl font-medium text-foreground mb-3"
                   />
-                  <Editable
+                  <Editable stableId="HowItWorksVariant1-5"
                     as="p"
                     defaultText={step.description}
                     propName={`steps[${i}].description`}

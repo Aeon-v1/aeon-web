@@ -28,7 +28,7 @@ export function StatVariant1({
   stats = defaultStats,
 }: StatVariant1Props) {
   return (
-    <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans border-t border-border">
+    <EditableSection stableId="StatVariant1-1" className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans border-t border-border">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-8 justify-between items-start">
           <motion.div
@@ -38,13 +38,13 @@ export function StatVariant1({
             transition={{ type: "spring", stiffness: 220, damping: 28 }}
             className="flex flex-col space-y-4 max-w-lg"
           >
-            <Editable
+            <Editable stableId="StatVariant1-2"
               as="h2"
               defaultText={headline}
               propName="headline"
               className="text-3xl md:text-4xl font-medium tracking-tighter text-foreground"
             />
-            <Editable
+            <Editable stableId="StatVariant1-3"
               as="p"
               defaultText={subtext}
               propName="subtext"
@@ -62,13 +62,13 @@ export function StatVariant1({
                 transition={{ type: "spring", stiffness: 220, damping: 28, delay: i * 0.1 }}
                 className="flex flex-col gap-2 border-l border-border pl-6"
               >
-                <Editable
+                <Editable stableId="StatVariant1-4"
                   as="span"
                   defaultText={stat.value}
                   propName={`stats[${i}].value`}
                   className="text-4xl md:text-5xl font-medium tracking-tighter text-foreground"
                 />
-                <Editable
+                <Editable stableId="StatVariant1-5"
                   as="span"
                   defaultText={stat.label}
                   propName={`stats[${i}].label`}

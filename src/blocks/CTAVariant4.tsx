@@ -124,19 +124,19 @@ export function CTAVariant4({
   }, []);
 
   return (
-    <EditableSection id={id} as="section" className="min-h-[600px] lg:min-h-[800px] bg-background text-foreground flex items-center justify-center px-6 py-12 overflow-hidden font-sans">
+    <EditableSection stableId="CTAVariant4-1" id={id} as="section" className="min-h-[600px] lg:min-h-[800px] bg-background text-foreground flex items-center justify-center px-6 py-12 overflow-hidden font-sans">
       <div className="w-full max-w-7xl animate-fade-in-up">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           {/* Left Content */}
           <div className="space-y-8 max-w-xl">
-            <Editable
+            <Editable stableId="CTAVariant4-2"
               id={`${id}-headline`}
               as="h1"
               defaultText={headline}
               propName="headline"
               className="text-5xl md:text-6xl lg:text-7xl font-medium leading-tight tracking-tight text-foreground animate-fade-in-up [animation-delay:200ms]"
             />
-            <Editable
+            <Editable stableId="CTAVariant4-3"
               id={`${id}-subtext`}
               as="p"
               defaultText={subtext}
@@ -144,11 +144,11 @@ export function CTAVariant4({
               className="text-lg md:text-xl text-muted-foreground leading-relaxed animate-fade-in-up [animation-delay:400ms]"
             />
             <div className="flex flex-wrap gap-4 animate-fade-in-up [animation-delay:600ms]">
-              <EditableButton
+              <EditableButton stableId="CTAVariant4-4"
                 id={`${id}-primary-btn`}
                 className="group relative px-6 py-3 bg-primary text-primary-foreground rounded-md font-medium overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer"
               >
-                <Editable
+                <Editable stableId="CTAVariant4-5"
                   id={`${id}-primary-btn-text`}
                   as="span"
                   defaultText={primaryButtonText}
@@ -158,11 +158,11 @@ export function CTAVariant4({
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></div>
               </EditableButton>
-              <EditableButton
+              <EditableButton stableId="CTAVariant4-6"
                 id={`${id}-secondary-btn`}
                 className="group relative px-6 py-3 bg-secondary text-secondary-foreground rounded-md font-medium overflow-hidden transition-all duration-300 hover:scale-105 border border-border cursor-pointer"
               >
-                <Editable
+                <Editable stableId="CTAVariant4-7"
                   id={`${id}-secondary-btn-text`}
                   as="span"
                   defaultText={secondaryButtonText}
@@ -184,7 +184,7 @@ export function CTAVariant4({
                     key={idx}
                     className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight py-4 sm:py-8 marquee-item text-foreground"
                   >
-                    <Editable
+                    <Editable stableId="CTAVariant4-8"
                       id={`${id}-marquee-${idx}`}
                       as="span"
                       defaultText={item}

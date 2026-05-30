@@ -47,9 +47,9 @@ export function CTAVariant5({
   }
 
   return (
-    <EditableSection id={id} as="section" className="py-16 md:py-24 bg-background font-sans">
+    <EditableSection stableId="CTAVariant5-1" id={id} as="section" className="py-16 md:py-24 bg-background font-sans">
       <div className="mx-auto max-w-5xl p-6 sm:p-8 flex flex-col items-center gap-6 text-center">
-        <Editable
+        <Editable stableId="CTAVariant5-2"
           id={`${id}-headline`}
           as="h2"
           defaultText={headline}
@@ -57,7 +57,7 @@ export function CTAVariant5({
           className="text-4xl md:text-5xl font-bold tracking-tight text-foreground !my-0"
         />
         <p className="text-lg opacity-70 md:text-2xl text-muted-foreground mt-4 text-balance">
-          <Editable
+          <Editable stableId="CTAVariant5-3"
             id={`${id}-subtext`}
             as="span"
             defaultText={subtext}
@@ -93,12 +93,12 @@ export function CTAVariant5({
                 </FormItem>
               )}
             />
-            <EditableButton
+            <EditableButton stableId="CTAVariant5-4"
               id={`${id}-submit-btn`}
               type="submit"
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-11 px-8 py-2 bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer w-full sm:w-auto"
             >
-              <Editable
+              <Editable stableId="CTAVariant5-5"
                 id={`${id}-submit-btn-text`}
                 as="span"
                 defaultText={buttonText}

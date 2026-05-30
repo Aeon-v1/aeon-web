@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { createContext } from "react";
 import { NavbarVariant1 } from "@/blocks/NavbarVariant1";
 import { NavbarVariant2 } from "@/blocks/NavbarVariant2";
 import { NavbarVariant3 } from "@/blocks/NavbarVariant3";
@@ -23,6 +25,7 @@ import { LogoSectionVariant1 } from "@/blocks/LogoSectionVariant1";
 import { StatVariant1 } from "@/blocks/StatVariant1";
 import { FeatureVariant1 } from "@/blocks/FeatureVariant1";
 import { HowItWorksVariant1 } from "@/blocks/HowItWorksVariant1";
+import { NewsletterVariant1 } from "@/blocks/NewsletterVariant1";
 
 // Map string types from the JSON to actual React components
 const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
@@ -50,6 +53,7 @@ const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   StatVariant1: StatVariant1,
   FeatureVariant1: FeatureVariant1,
   HowItWorksVariant1: HowItWorksVariant1,
+  NewsletterVariant1: NewsletterVariant1,
 };
 
 export interface BlockData {
@@ -60,6 +64,8 @@ export interface BlockData {
 export interface BlockRendererProps {
   blocks: BlockData[];
 }
+
+export const BlockContext = createContext<string>("");
 
 export function BlockRenderer({ blocks }: BlockRendererProps) {
   if (!blocks || blocks.length === 0) {
@@ -81,8 +87,14 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
           );
         }
 
+        const blockId = block.props?.id || `block-${index}`;
+        
         // Render the resolved component with its dynamic props
-        return <Component key={index} {...block.props} />;
+        return (
+          <BlockContext.Provider key={index} value={blockId}>
+            <Component id={blockId} {...block.props} />
+          </BlockContext.Provider>
+        );
       })}
     </div>
   );

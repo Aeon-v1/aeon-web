@@ -305,13 +305,17 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body, 'Funnel Sans', sans-serif);
-    font-weight: 400;
+    font-weight: var(--font-body-weight, 400);
+    letter-spacing: var(--font-body-letter-spacing, normal);
+    line-height: var(--font-body-line-height, normal);
   }
   html {
     font-family: var(--font-body, 'Funnel Sans', sans-serif);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading, 'Funnel Sans', sans-serif);
-    font-weight: 500;
+    font-weight: var(--font-heading-weight, 500);
+    letter-spacing: var(--font-heading-letter-spacing, normal);
+    line-height: var(--font-heading-line-height, normal);
   }
 }

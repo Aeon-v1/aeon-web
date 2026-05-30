@@ -35,18 +35,18 @@ export function FAQVariant3({
   faqs = defaultFaqs,
 }: FAQVariant3Props) {
     return (
-        <EditableSection id={id} className="py-16 md:py-24 bg-background font-sans">
+        <EditableSection stableId="FAQVariant3-1" id={id} className="py-16 md:py-24 bg-background font-sans">
             <div className="mx-auto max-w-5xl px-6">
                 <div className="grid gap-8 md:grid-cols-5 md:gap-12">
                     <div className="md:col-span-2">
-                        <Editable
+                        <Editable stableId="FAQVariant3-2"
                             id={`${id}-headline`}
                             as="h2"
                             defaultText={headline}
                             propName="headline"
                             className="text-foreground text-4xl font-bold"
                         />
-                        <Editable
+                        <Editable stableId="FAQVariant3-3"
                             id={`${id}-subtext`}
                             as="p"
                             defaultText={subtext}
@@ -54,7 +54,7 @@ export function FAQVariant3({
                             className="text-muted-foreground mt-4 text-balance text-lg"
                         />
                         <div className="text-muted-foreground mt-6 hidden md:flex items-center gap-1 flex-wrap">
-                            <Editable
+                            <Editable stableId="FAQVariant3-4"
                                 id={`${id}-contact-text`}
                                 as="span"
                                 defaultText={contactText}
@@ -65,7 +65,7 @@ export function FAQVariant3({
                                 href="#"
                                 className="text-primary font-medium hover:underline"
                             >
-                                <Editable
+                                <Editable stableId="FAQVariant3-5"
                                     id={`${id}-contact-link-text`}
                                     as="span"
                                     defaultText={contactLinkText}
@@ -94,7 +94,7 @@ export function FAQVariant3({
                                             }
                                         }} className="w-full">
                                             <AccordionTrigger className="cursor-pointer text-base hover:no-underline text-foreground">
-                                                <Editable
+                                                <Editable stableId="FAQVariant3-6"
                                                     id={`${id}-faq-${i}-q`}
                                                     as="span"
                                                     defaultText={item.question}
@@ -104,7 +104,7 @@ export function FAQVariant3({
                                             </AccordionTrigger>
                                         </div>
                                         <AccordionContent>
-                                            <Editable
+                                            <Editable stableId="FAQVariant3-7"
                                                 id={`${id}-faq-${i}-a`}
                                                 as="p"
                                                 defaultText={item.answer}
@@ -120,7 +120,7 @@ export function FAQVariant3({
                     </div>
 
                     <div className="text-muted-foreground mt-6 flex md:hidden items-center gap-1 flex-wrap">
-                        <Editable
+                        <Editable stableId="FAQVariant3-8"
                             id={`${id}-contact-text-mobile`}
                             as="span"
                             defaultText={contactText}
@@ -131,7 +131,7 @@ export function FAQVariant3({
                             href="#"
                             className="text-primary font-medium hover:underline"
                         >
-                            <Editable
+                            <Editable stableId="FAQVariant3-9"
                                 id={`${id}-contact-link-text-mobile`}
                                 as="span"
                                 defaultText={contactLinkText}

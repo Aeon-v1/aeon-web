@@ -17,19 +17,21 @@ export async function GET(req: Request) {
   try {
     await checkAndBootstrapDb();
     const results = await sql`
-      SELECT pages_json, overrides_json, theme_json
-      FROM user_drafts
-      WHERE uid = ${uid}
+      SELECT ud.pages_json, ud.overrides_json, ud.theme_json, COALESCE(p.has_paid, false) as has_paid
+      FROM user_drafts ud
+      LEFT JOIN payments p ON p.uid = ud.uid
+      WHERE ud.uid = ${uid}
     `;
 
     if (results.length > 0) {
       return NextResponse.json({
         pages: JSON.parse(results[0].pages_json),
         elementOverrides: JSON.parse(results[0].overrides_json),
-        globalTheme: JSON.parse(results[0].theme_json)
+        globalTheme: JSON.parse(results[0].theme_json),
+        hasPaid: results[0].has_paid
       });
     } else {
-      return NextResponse.json({ pages: null, elementOverrides: null, globalTheme: null });
+      return NextResponse.json({ pages: null, elementOverrides: null, globalTheme: null, hasPaid: false });
     }
   } catch (error: any) {
     console.error("Sync GET error:", error);

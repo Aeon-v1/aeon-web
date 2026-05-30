@@ -58,7 +58,7 @@ export function PricingVariant1({
   plans = defaultPlans,
 }: PricingVariant1Props) {
   return (
-    <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground transition-colors duration-300 font-sans">
+    <EditableSection stableId="PricingVariant1-1" className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground transition-colors duration-300 font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
@@ -68,13 +68,13 @@ export function PricingVariant1({
           className="flex flex-col items-center justify-center space-y-4 text-center"
         >
           <div className="space-y-2">
-            <Editable
+            <Editable stableId="PricingVariant1-2"
               as="h2"
               defaultText={headline}
               propName="headline"
               className="text-4xl font-medium tracking-tighter sm:text-5xl md:text-6xl text-foreground"
             />
-            <Editable
+            <Editable stableId="PricingVariant1-3"
               as="p"
               defaultText={subtext}
               propName="subtext"
@@ -105,17 +105,17 @@ export function PricingVariant1({
                 }`}
               >
                 <CardHeader>
-                  <Editable
+                  <Editable stableId="PricingVariant1-4"
                     as="div"
                     defaultText={plan.name}
                     propName={`plans[${index}].name`}
                     className="text-xl font-medium tracking-tight text-card-foreground font-sans"
                   />
                   <div className="text-5xl font-medium tracking-tighter mt-2 flex items-baseline">
-                    <Editable as="span" defaultText={plan.price} propName={`plans[${index}].price`} inline />
+                    <Editable stableId="PricingVariant1-5" as="span" defaultText={plan.price} propName={`plans[${index}].price`} inline />
                     <span className="text-lg text-muted-foreground font-light ml-1">/mo</span>
                   </div>
-                  <Editable
+                  <Editable stableId="PricingVariant1-6"
                     as="p"
                     defaultText={plan.description}
                     propName={`plans[${index}].description`}
@@ -140,7 +140,7 @@ export function PricingVariant1({
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
-                        <Editable
+                        <Editable stableId="PricingVariant1-7"
                           as="span"
                           defaultText={feature}
                           propName={`plans[${index}].features[${i}]`}
@@ -161,7 +161,7 @@ export function PricingVariant1({
                         : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border"
                     }`}
                   >
-                    <Editable as="span" defaultText={plan.ctaText} propName={`plans[${index}].ctaText`} inline />
+                    <Editable stableId="PricingVariant1-8" as="span" defaultText={plan.ctaText} propName={`plans[${index}].ctaText`} inline />
                   </motion.button>
                 </CardFooter>
               </Card>

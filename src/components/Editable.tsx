@@ -2,13 +2,16 @@
 
 import React, { useRef, useEffect, useId } from "react";
 import { useEditor } from "./EditorProvider";
+import { BlockContext } from "./BlockRenderer";
 
 export interface EditableProps extends React.HTMLAttributes<HTMLElement> {
   as?: React.ElementType;
   defaultText: string;
   propName?: string;
   inline?: boolean;
+  inline?: boolean;
   id?: string;
+  stableId?: string;
 }
 
 export function Editable({
@@ -18,11 +21,13 @@ export function Editable({
   inline = false,
   className = "",
   id: explicitId,
+  stableId,
   ...props
 }: EditableProps) {
   const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, updateOverride, isPreviewMode } = useEditor();
+  const blockId = React.useContext(BlockContext);
   const generatedId = useId(); 
-  const id = explicitId ?? generatedId;
+  const id = explicitId ?? (blockId && stableId ? `${blockId}-${stableId}` : generatedId);
   
   const isSelected = selectedId === id;
   const isEditing = editingId === id;
@@ -121,6 +126,8 @@ export function Editable({
   if (overrides.letterSpacing !== undefined) dynamicStyles.letterSpacing = `${overrides.letterSpacing}px`;
   if (overrides.lineHeight) dynamicStyles.lineHeight = `${overrides.lineHeight}%`;
   if (overrides.textAlign) dynamicStyles.textAlign = overrides.textAlign;
+  if (overrides.opacity !== undefined) dynamicStyles.opacity = overrides.opacity;
+  if (overrides.visible === false) dynamicStyles.display = "none";
 
   return (
     <Component
@@ -148,7 +155,9 @@ export interface EditableButtonProps extends React.HTMLAttributes<HTMLElement> {
   as?: React.ElementType;
   href?: string;
   children?: React.ReactNode;
+  children?: React.ReactNode;
   id?: string;
+  stableId?: string;
 }
 
 export function EditableButton({
@@ -157,11 +166,13 @@ export function EditableButton({
   className = "",
   children,
   id: explicitId,
+  stableId,
   ...props
 }: EditableButtonProps) {
   const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode, canvasTheme } = useEditor();
+  const blockId = React.useContext(BlockContext);
   const generatedId = useId(); 
-  const id = explicitId ?? generatedId; 
+  const id = explicitId ?? (blockId && stableId ? `${blockId}-${stableId}` : generatedId); 
   
   const isSelected = selectedId === id;
   
@@ -196,6 +207,8 @@ export function EditableButton({
   if (overrides.backgroundColor) dynamicStyles.backgroundColor = overrides.backgroundColor;
   if (overrides.borderRadius !== undefined) dynamicStyles.borderRadius = `${overrides.borderRadius}px`;
   if (overrides.boxShadow) dynamicStyles.boxShadow = overrides.boxShadow;
+  if (overrides.opacity !== undefined) dynamicStyles.opacity = overrides.opacity;
+  if (overrides.visible === false) dynamicStyles.display = "none";
 
   const currentHref = overrides.href ?? href;
   
@@ -229,7 +242,9 @@ export function EditableButton({
 export interface EditableSectionProps extends React.HTMLAttributes<HTMLElement> {
   as?: React.ElementType;
   children?: React.ReactNode;
+  children?: React.ReactNode;
   id?: string;
+  stableId?: string;
 }
 
 export function EditableSection({
@@ -237,11 +252,13 @@ export function EditableSection({
   className = "",
   children,
   id: explicitId,
+  stableId,
   ...props
 }: EditableSectionProps) {
   const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode, canvasTheme } = useEditor();
+  const blockId = React.useContext(BlockContext);
   const generatedId = useId(); 
-  const id = explicitId ?? generatedId; 
+  const id = explicitId ?? (blockId && stableId ? `${blockId}-${stableId}` : generatedId); 
   
   const isSelected = selectedId === id;
   const overrides = elementOverrides[id] || {};
@@ -275,6 +292,8 @@ export function EditableSection({
   if (overrides.backgroundColor) dynamicStyles.backgroundColor = overrides.backgroundColor;
   if (overrides.paddingTop !== undefined) dynamicStyles.paddingTop = `${overrides.paddingTop}px`;
   if (overrides.paddingBottom !== undefined) dynamicStyles.paddingBottom = `${overrides.paddingBottom}px`;
+  if (overrides.opacity !== undefined) dynamicStyles.opacity = overrides.opacity;
+  if (overrides.visible === false) dynamicStyles.display = "none";
 
   let finalClassName = className;
   if (overrides.invert) {
@@ -306,7 +325,9 @@ export interface EditableImageProps extends React.HTMLAttributes<HTMLImageElemen
   src?: string;
   alt?: string;
   fallbackQuery?: string;
+  fallbackQuery?: string;
   id?: string;
+  stableId?: string;
 }
 
 export function EditableImage({
@@ -315,11 +336,13 @@ export function EditableImage({
   fallbackQuery,
   className = "",
   id: explicitId,
+  stableId,
   ...props
 }: EditableImageProps) {
   const { selectedId, setSelectedId, editingId, setEditingId, hoveredId, setHoveredId, elementOverrides, isPreviewMode } = useEditor();
+  const blockId = React.useContext(BlockContext);
   const generatedId = useId(); 
-  const id = explicitId ?? generatedId; 
+  const id = explicitId ?? (blockId && stableId ? `${blockId}-${stableId}` : generatedId); 
   
   const isSelected = selectedId === id;
   const overrides = elementOverrides[id] || {};
@@ -353,6 +376,7 @@ export function EditableImage({
   if (overrides.borderRadius !== undefined) dynamicStyles.borderRadius = `${overrides.borderRadius}px`;
   if (overrides.boxShadow) dynamicStyles.boxShadow = overrides.boxShadow;
   if (overrides.opacity !== undefined) dynamicStyles.opacity = overrides.opacity;
+  if (overrides.visible === false) dynamicStyles.display = "none";
 
   let finalClassName = className;
   if (isSelected) {

@@ -7,6 +7,7 @@ import { ChatMessageItem } from "./ChatMessageItem";
 import { useEditor } from "./EditorProvider";
 import AIThinkingBlock from "./ui/ai-thinking-block";
 import { useAuth } from "./AuthProvider";
+import { useSearchParams } from "next/navigation";
 
 export interface Message {
   id: string;
@@ -29,20 +30,27 @@ function isGenerateRequest(text: string): boolean {
 // Derive a short page name from the user's prompt
 function derivePageName(prompt: string): string {
   const lower = prompt.toLowerCase();
-  // Try to extract "for X" pattern
-  const forMatch = lower.match(/for\s+([a-z0-9\s]{2,30}?)(?:\s*[-–,.]|$)/i);
-  if (forMatch) return forMatch[1].trim().replace(/\b\w/g, c => c.toUpperCase());
-  // Fallback: first 4 words
-  return prompt.split(/\s+/).slice(0, 4).join(" ");
+  const forMatch = lower.match(/for\s+(?:a\s+|an\s+|the\s+)?([a-z0-9\s]{2,20}?)(?:\s*[-–,.]|$)/i);
+  if (forMatch && forMatch[1]) return forMatch[1].trim().replace(/\b\w/g, c => c.toUpperCase());
+  return "Home";
 }
 
-const INITIAL_MESSAGES: Message[] = [
-  { id: "1", role: "user", content: "Build a sleek landing page for a headless rendering engine called Aeon Web." },
-  { id: "2", role: "assistant", content: "I've generated a complete landing page for Aeon Web. It includes a Hero section, Logo cloud, Features grid, How it Works steps, Pricing, and Testimonials." },
-];
+function generateReport(blocks: any[]): string {
+  const blockTypes = blocks.map(b => b.type);
+  const sections = [];
+  if (blockTypes.some(t => t.includes('Hero'))) sections.push('a high-converting Hero section');
+  if (blockTypes.some(t => t.includes('Feature'))) sections.push('a Features grid');
+  if (blockTypes.some(t => t.includes('Pricing'))) sections.push('a Pricing table');
+  if (blockTypes.some(t => t.includes('Testimonial'))) sections.push('social proof Testimonials');
+  if (blockTypes.some(t => t.includes('FAQ'))) sections.push('an FAQ section');
+  
+  const sectionsText = sections.length > 0 ? ` featuring ${sections.join(', ')}` : '';
+  
+  return `✅ **Site Generated Successfully!**\n\nI've tailored a custom layout based on your request${sectionsText}, comprising ${blocks.length} structural blocks total. \n\nThe design is now active in your canvas. You can click any text to edit it, or ask me to tweak the colors and styling right here!`;
+}
 
 export function ChatSidebar() {
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState("");
@@ -51,6 +59,17 @@ export function ChatSidebar() {
   const userName = "Builder";
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const searchParams = useSearchParams();
+  const initPrompt = searchParams.get("prompt");
+
+  useEffect(() => {
+    if (initPrompt && messages.length === 0) {
+      setMessages([
+        { id: "init-1", role: "user", content: initPrompt },
+        { id: "init-2", role: "assistant", content: "✅ **Site Generated Successfully!**\n\nI've generated a custom, fully-styled website based on your request. The layout is active in the canvas. You can click any text to edit it directly, or ask me to change the colors, add new sections, or tweak the copy!" }
+      ]);
+    }
+  }, [initPrompt]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -99,11 +118,10 @@ export function ChatSidebar() {
         const pageName = derivePageName(text);
         addGeneratedPage(pageName, data.blocks);
 
-        const blockCount = data.blocks.length;
         setMessages(prev => [...prev, { 
           id: assistantMsgId, 
           role: "assistant", 
-          content: `✅ Done! I've built **${pageName}** with ${blockCount} blocks. It's now open as a new page tab in the canvas.` 
+          content: generateReport(data.blocks)
         }]);
       } catch (err) {
         setMessages(prev => [...prev, { 

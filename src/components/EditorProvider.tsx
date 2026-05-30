@@ -25,11 +25,19 @@ export interface TextProperties {
   src?: string;
   alt?: string;
   opacity?: number;
+  // Visibility
+  visible?: boolean;
 }
 
 export interface GlobalTheme {
   headingFont?: string;
   bodyFont?: string;
+  headingFontWeight?: string;
+  headingLetterSpacing?: string;
+  headingLineHeight?: string;
+  bodyFontWeight?: string;
+  bodyLetterSpacing?: string;
+  bodyLineHeight?: string;
   primaryColor?: string;
   secondaryColor?: string;
   accentColor?: string;
@@ -81,6 +89,7 @@ export interface EditorContextType {
   setIsLeftPanelOpen: (val: boolean) => void;
   isRightPanelOpen: boolean;
   setIsRightPanelOpen: (val: boolean) => void;
+  hasPaid: boolean;
 }
 
 export const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -200,6 +209,7 @@ export function EditorProvider({
   const { user } = useAuth();
   const [syncStatus, setSyncStatus] = useState<"Synced" | "Saving..." | "Error">("Synced");
   const [isLoaded, setIsLoaded] = useState(isPublished);
+  const [hasPaid, setHasPaid] = useState(false);
 
   // Load from Neon DB on mount
   useEffect(() => {
@@ -210,6 +220,7 @@ export function EditorProvider({
         if (data.pages && data.pages.length > 0) setPages(data.pages);
         if (data.elementOverrides) setElementOverrides(data.elementOverrides);
         if (data.globalTheme) setGlobalTheme(data.globalTheme);
+        if (data.hasPaid) setHasPaid(data.hasPaid);
         setIsLoaded(true);
       })
       .catch(err => {
@@ -445,7 +456,8 @@ export function EditorProvider({
       syncStatus, publishWebsite,
       isLoaded,
       isLeftPanelOpen, setIsLeftPanelOpen,
-      isRightPanelOpen, setIsRightPanelOpen
+      isRightPanelOpen, setIsRightPanelOpen,
+      hasPaid
     }}>
       {children}
       {!isPreviewMode && selectedId && <BoundingBoxOverlay targetId={selectedId} />}

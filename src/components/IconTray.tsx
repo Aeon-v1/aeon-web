@@ -3,6 +3,7 @@
 import React from "react";
 import { useTheme } from "next-themes";
 import { useEditor } from "@/components/EditorProvider";
+import { useAuth } from "@/components/AuthProvider";
 import { 
   PanelLeft, 
   Monitor, 
@@ -22,7 +23,7 @@ import {
 
 export function IconTray() {
   const { theme, setTheme } = useTheme();
-  const { isPreviewMode, setIsPreviewMode, viewportSize, setViewportSize, syncStatus, publishWebsite, isLeftPanelOpen, setIsLeftPanelOpen, isRightPanelOpen, setIsRightPanelOpen } = useEditor();
+  const { isPreviewMode, setIsPreviewMode, viewportSize, setViewportSize, syncStatus, publishWebsite, isLeftPanelOpen, setIsLeftPanelOpen, isRightPanelOpen, setIsRightPanelOpen, hasPaid } = useEditor();
   const [mounted, setMounted] = React.useState(false);
   const [publishing, setPublishing] = React.useState(false);
 
@@ -30,13 +31,73 @@ export function IconTray() {
     setMounted(true);
   }, []);
 
+  const { user, linkWithGoogle } = useAuth();
+
   const handlePublish = async () => {
+    if (!hasPaid) {
+      if (!user?.uid) {
+        alert("Authentication is still initializing. Please wait a second and try again.");
+        return;
+      }
+
+      let finalUser = user;
+      if (user.isAnonymous) {
+        if (window.confirm("You are currently using a temporary session. To make sure you don't lose access to your website after paying, please link a Google account now.")) {
+          try {
+            const linkedUser = await linkWithGoogle();
+            if (linkedUser) {
+              finalUser = linkedUser;
+            } else {
+              return; // Linking returned null
+            }
+          } catch (e) {
+             return; // Linking threw error or was cancelled
+          }
+        } else {
+          return; // User cancelled the confirm dialog
+        }
+      }
+      
+      const emailInput = finalUser?.email || window.prompt("Please enter your email address for the receipt:", "");
+      if (!emailInput) return; // User cancelled
+
+      setPublishing(true);
+      try {
+        const res = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          // Hardcoding 5000 NGN for now
+          body: JSON.stringify({ email: emailInput, amount: 5000, uid: user.uid }),
+        });
+        const data = await res.json();
+        setPublishing(false);
+        
+        if (data.authorization_url) {
+          window.location.href = data.authorization_url;
+        } else {
+          alert(data.error || "Failed to initialize payment");
+        }
+      } catch (e) {
+        console.error(e);
+        alert("Payment initialization failed");
+        setPublishing(false);
+      }
+      return;
+    }
+
+    const newWindow = window.open('about:blank', '_blank');
     setPublishing(true);
     const slug = await publishWebsite();
     setPublishing(false);
     if (slug) {
-      window.open(`/p/${slug}`, '_blank');
+      if (newWindow) {
+        newWindow.location.href = `/p/${slug}`;
+      } else {
+        // Fallback if popup was blocked completely
+        alert(`Published successfully! Visit: /p/${slug}`);
+      }
     } else {
+      if (newWindow) newWindow.close();
       alert("Failed to publish website.");
     }
   };

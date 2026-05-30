@@ -23,7 +23,7 @@ export function FooterVariant1({
   copyright = "© 2025 Aeon. All rights reserved.",
 }: FooterVariant1Props) {
   return (
-    <EditableSection as="footer" className="w-full border-t border-border bg-background text-muted-foreground font-sans">
+    <EditableSection stableId="FooterVariant1-1" as="footer" className="w-full border-t border-border bg-background text-muted-foreground font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -34,14 +34,14 @@ export function FooterVariant1({
         >
           {/* Brand */}
           <div className="flex flex-col gap-2 max-w-xs">
-            <Editable
+            <Editable stableId="FooterVariant1-2"
               as="span"
               defaultText={brand}
               propName="brand"
               className="text-foreground text-xl font-medium tracking-tight inline-block"
               inline
             />
-            <Editable
+            <Editable stableId="FooterVariant1-3"
               as="p"
               defaultText={tagline}
               propName="tagline"
@@ -58,7 +58,7 @@ export function FooterVariant1({
                   href={link.href}
                   className="text-sm font-light text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <Editable as="span" defaultText={link.label} propName={`links[${index}].label`} inline />
+                  <Editable stableId="FooterVariant1-4" as="span" defaultText={link.label} propName={`links[${index}].label`} inline />
                 </a>
               ))}
             </nav>
@@ -67,7 +67,7 @@ export function FooterVariant1({
 
         {/* Divider + Copyright */}
         <div className="mt-12 border-t border-border pt-6 flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Editable
+          <Editable stableId="FooterVariant1-5"
             as="p"
             defaultText={copyright}
             propName="copyright"

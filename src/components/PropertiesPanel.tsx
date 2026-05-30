@@ -214,13 +214,31 @@ function ToggleGroup({ options, activeIndex, onChange }: { options: React.ReactN
   );
 }
 
-function Slider({ value }: { value: number }) {
+function Slider({ value, onChange }: { value: number, onChange?: (val: number) => void }) {
   return (
-    <div className="w-full flex items-center gap-2">
-      <div className="relative flex-1 h-1 bg-white dark:bg-[#1c1c1a] rounded-full overflow-hidden">
+    <div 
+      className="w-full flex items-center gap-2 cursor-pointer" 
+      onMouseDown={(e) => {
+        if (!onChange) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        let newVal = (e.clientX - rect.left) / rect.width;
+        onChange(Math.max(0, Math.min(1, newVal)));
+        const handleMouseMove = (moveE: MouseEvent) => {
+          let newVal = (moveE.clientX - rect.left) / rect.width;
+          onChange(Math.max(0, Math.min(1, newVal)));
+        };
+        const handleMouseUp = () => {
+          window.removeEventListener('mousemove', handleMouseMove as any);
+          window.removeEventListener('mouseup', handleMouseUp);
+        };
+        window.addEventListener('mousemove', handleMouseMove as any);
+        window.addEventListener('mouseup', handleMouseUp);
+      }}
+    >
+      <div className="relative flex-1 h-1 bg-black/10 dark:bg-[#1c1c1a] rounded-full overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 bottom-0 bg-blue-500 rounded-full" style={{ width: `${value * 100}%` }} />
       </div>
-      <div className="w-3 h-3 bg-[#EFEEEA] rounded-full shadow-sm border border-black/20 shrink-0" />
+      <div className="w-3 h-3 bg-[#EFEEEA] rounded-full shadow-sm border border-black/20 shrink-0 pointer-events-none" />
     </div>
   );
 }
@@ -374,17 +392,61 @@ function GlobalView() {
         <span>Global Theme</span>
       </div>
       
-      <Section title="Typography">
-        <Row label="Heading">
+      <Section title="Heading Typography">
+        <Row label="Font">
           <FontDropdown 
             value={globalTheme.headingFont ?? ""} 
             onChange={(font) => handleUpdate({ headingFont: font })} 
           />
         </Row>
-        <Row label="Body">
+        <Row label="Weight">
+          <Input 
+            value={globalTheme.headingFontWeight ?? ""} 
+            onChange={(val) => handleUpdate({ headingFontWeight: val })} 
+            placeholder="e.g. 700 or bold"
+          />
+        </Row>
+        <Row label="Letter Spacing">
+          <Input 
+            value={globalTheme.headingLetterSpacing ?? ""} 
+            onChange={(val) => handleUpdate({ headingLetterSpacing: val })} 
+            placeholder="e.g. -0.02em"
+          />
+        </Row>
+        <Row label="Line Height">
+          <Input 
+            value={globalTheme.headingLineHeight ?? ""} 
+            onChange={(val) => handleUpdate({ headingLineHeight: val })} 
+            placeholder="e.g. 1.2"
+          />
+        </Row>
+      </Section>
+      <Section title="Body Typography">
+        <Row label="Font">
           <FontDropdown 
             value={globalTheme.bodyFont ?? ""} 
             onChange={(font) => handleUpdate({ bodyFont: font })} 
+          />
+        </Row>
+        <Row label="Weight">
+          <Input 
+            value={globalTheme.bodyFontWeight ?? ""} 
+            onChange={(val) => handleUpdate({ bodyFontWeight: val })} 
+            placeholder="e.g. 400 or normal"
+          />
+        </Row>
+        <Row label="Letter Spacing">
+          <Input 
+            value={globalTheme.bodyLetterSpacing ?? ""} 
+            onChange={(val) => handleUpdate({ bodyLetterSpacing: val })} 
+            placeholder="e.g. 0.01em"
+          />
+        </Row>
+        <Row label="Line Height">
+          <Input 
+            value={globalTheme.bodyLineHeight ?? ""} 
+            onChange={(val) => handleUpdate({ bodyLineHeight: val })} 
+            placeholder="e.g. 1.6"
           />
         </Row>
       </Section>
@@ -550,6 +612,7 @@ export function PropertiesPanel() {
             boxShadow: styles.boxShadow,
             paddingTop: styles.paddingTop,
             paddingBottom: styles.paddingBottom,
+            fontFamily: styles.fontFamily,
           });
         }
       }, 0);
@@ -652,24 +715,37 @@ export function PropertiesPanel() {
 
             {/* Styles Section */}
             <Section title="Styles">
-              <Row label={<><Plus className="h-3 w-3" /> Opacity</>}>
+              <Row label="Opacity">
                 <div className="flex items-center gap-3 w-full">
-                  <div className="w-16"><Input value="1" /></div>
-                  <Slider value={0.8} />
+                  <div className="w-16">
+                    <Input 
+                      value={overrides.opacity?.toString() ?? (computedStyles.opacity ? computedStyles.opacity : "1")} 
+                      onChange={(val) => {
+                        const num = parseFloat(val);
+                        if (!isNaN(num)) handleUpdate({ opacity: num });
+                      }} 
+                    />
+                  </div>
+                  <Slider 
+                    value={overrides.opacity ?? (computedStyles.opacity ? parseFloat(computedStyles.opacity) : 1)} 
+                    onChange={(val) => handleUpdate({ opacity: val })} 
+                  />
                 </div>
               </Row>
-              <Row label={<><Plus className="h-3 w-3" /> Visible</>}>
-                <ToggleGroup options={[<span key="yes" className="text-blue-400 font-medium">Yes</span>, <span key="no">No</span>]} activeIndex={0} />
+              <Row label="Visible">
+                <ToggleGroup 
+                  options={[<span key="yes" className="text-blue-400 font-medium">Yes</span>, <span key="no">No</span>]} 
+                  activeIndex={overrides.visible === false ? 1 : 0} 
+                  onChange={(idx) => handleUpdate({ visible: idx === 0 })}
+                />
               </Row>
             </Section>
 
             {/* Text Section */}
             <Section title="Text">
-              <Row label="Styles">
-                <Dropdown placeholder="Select..." icon={<div className="w-4 h-4 bg-black/10 dark:bg-white/10 rounded flex items-center justify-center text-[10px] font-bold">T</div>} />
-              </Row>
               
-              <Row label={<><Plus className="h-3 w-3" /> Content</>}>
+              
+              <Row label="Content">
                 <Input 
                   value={overrides.content ?? computedStyles.content ?? ""} 
                   onChange={(val) => handleUpdate({ content: val })} 
@@ -678,7 +754,7 @@ export function PropertiesPanel() {
 
               <Row label="Font">
                 <FontDropdown 
-                  value={overrides.fontFamily ?? (computedStyles.fontFamily ? computedStyles.fontFamily.replace(/['"]/g, '').split(',')[0] : "")} 
+                  value={overrides.fontFamily ?? (computedStyles.fontFamily ? computedStyles.fontFamily.replace(/['"]/g, '').split(',')[0].trim() : "")} 
                   onChange={(font) => handleUpdate({ fontFamily: font })} 
                 />
               </Row>
@@ -696,7 +772,7 @@ export function PropertiesPanel() {
                 />
               </Row>
 
-              <Row label={<><Plus className="h-3 w-3" /> Size</>}>
+              <Row label="Size">
                 <div className="flex items-center gap-2 w-full">
                   <Input 
                     value={overrides.fontSize?.toString() ?? (computedStyles.fontSize ? parseFloat(computedStyles.fontSize).toString() : "")} 
@@ -751,28 +827,19 @@ export function PropertiesPanel() {
                 />
               </Row>
 
-              <Row label="OpenType">
-                <div className="flex items-center gap-2 w-full">
-                  <button className="w-7 h-5 bg-white dark:bg-[#1c1c1a] border border-black/[0.04] dark:border-white/[0.04] rounded-full flex items-center px-0.5">
-                    <div className="w-4 h-4 bg-black/[0.2] dark:bg-white/[0.2] rounded-full" />
-                  </button>
-                  <div className="flex-1">
-                    <Input value="" placeholder="Add..." className="bg-transparent border-none placeholder:text-gray-600 dark:text-[#D8D8D6]/30" />
-                  </div>
-                </div>
-              </Row>
+              
             </Section>
 
             {/* Button Section */}
             <Section title="Button">
-              <Row label={<><Plus className="h-3 w-3" /> Background</>}>
+              <Row label="Background">
                 <ColorInput 
                   value={overrides.backgroundColor ?? computedStyles.backgroundColor ?? ""} 
                   onChange={(val) => handleUpdate({ backgroundColor: val })} 
                 />
               </Row>
               
-              <Row label={<><Plus className="h-3 w-3" /> Radius</>}>
+              <Row label="Radius">
                 <div className="flex items-center gap-2 w-full">
                   <Input 
                     value={overrides.borderRadius?.toString() ?? (computedStyles.borderRadius && computedStyles.borderRadius !== "0px" ? parseFloat(computedStyles.borderRadius).toString() : "0")} 
@@ -808,7 +875,7 @@ export function PropertiesPanel() {
 
             {/* Layout Section */}
             <Section title="Layout">
-              <Row label={<><Plus className="h-3 w-3" /> Padding Top</>}>
+              <Row label="Padding Top">
                 <div className="flex items-center gap-2 w-full">
                   <Input 
                     value={overrides.paddingTop?.toString() ?? (computedStyles.paddingTop ? parseFloat(computedStyles.paddingTop).toString() : "0")} 
@@ -821,7 +888,7 @@ export function PropertiesPanel() {
                 </div>
               </Row>
               
-              <Row label={<><Plus className="h-3 w-3" /> Padding Bottom</>}>
+              <Row label="Padding Bottom">
                 <div className="flex items-center gap-2 w-full">
                   <Input 
                     value={overrides.paddingBottom?.toString() ?? (computedStyles.paddingBottom ? parseFloat(computedStyles.paddingBottom).toString() : "0")} 
@@ -834,7 +901,7 @@ export function PropertiesPanel() {
                 </div>
               </Row>
               
-              <Row label={<><Plus className="h-3 w-3" /> Invert Theme</>}>
+              <Row label="Invert Theme">
                 <div className="flex items-center gap-2 w-full">
                   <ToggleGroup 
                     options={[<span key="yes" className="text-blue-400 font-medium">Yes</span>, <span key="no">No</span>]} 
@@ -844,7 +911,7 @@ export function PropertiesPanel() {
                 </div>
               </Row>
 
-              <Row label={<><Plus className="h-3 w-3" /> Background</>}>
+              <Row label="Background">
                 <ColorInput 
                   value={overrides.backgroundColor ?? computedStyles.backgroundColor ?? ""} 
                   onChange={(val) => handleUpdate({ backgroundColor: val })} 

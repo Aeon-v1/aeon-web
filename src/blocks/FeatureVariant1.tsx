@@ -57,7 +57,7 @@ function getIcon(name?: string) {
     features = defaultFeatures,
   }: FeatureVariant1Props) {
     return (
-      <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
+      <EditableSection stableId="FeatureVariant1-1" className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             
@@ -70,13 +70,13 @@ function getIcon(name?: string) {
                 transition={{ type: "spring", stiffness: 220, damping: 28 }}
                 className="flex flex-col items-start text-left space-y-4 mb-12"
               >
-                <Editable
+                <Editable stableId="FeatureVariant1-2"
                   as="h2"
                   defaultText={headline}
                   propName="headline"
                   className="text-3xl md:text-5xl font-medium tracking-tighter text-foreground max-w-2xl"
                 />
-                <Editable
+                <Editable stableId="FeatureVariant1-3"
                   as="p"
                   defaultText={subtext}
                   propName="subtext"
@@ -98,13 +98,13 @@ function getIcon(name?: string) {
                       {getIcon(feature.iconName)}
                     </div>
                     <div>
-                      <Editable
+                      <Editable stableId="FeatureVariant1-4"
                         as="h3"
                         defaultText={feature.title}
                         propName={`features[${i}].title`}
                         className="text-lg font-medium text-foreground mb-2"
                       />
-                      <Editable
+                      <Editable stableId="FeatureVariant1-5"
                         as="p"
                         defaultText={feature.description}
                         propName={`features[${i}].description`}
@@ -126,7 +126,7 @@ function getIcon(name?: string) {
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent z-0" />
               <div className="relative z-10 w-full h-full p-4 md:p-8">
-                <EditableImage
+                <EditableImage stableId="FeatureVariant1-6"
                   className="w-full h-full object-cover rounded-xl border border-border/50"
                   fallbackQuery="abstract technology code geometric minimal"
                   alt="Feature showcase"

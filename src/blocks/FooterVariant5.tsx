@@ -61,13 +61,13 @@ export function FooterVariant5({
   copyrightText = "© 2024 Aeon Web. All rights reserved.",
 }: FooterVariant5Props) {
   return (
-    <EditableSection id={id} as="section" className="py-16 md:py-32 bg-background font-sans">
+    <EditableSection stableId="FooterVariant5-1" id={id} as="section" className="py-16 md:py-32 bg-background font-sans">
       <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
         <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
             <div className="flex items-center gap-2 lg:justify-start text-foreground">
               <Hexagon className="h-8 w-8" />
-              <Editable
+              <Editable stableId="FooterVariant5-2"
                 id={`${id}-brandName`}
                 as="h2"
                 defaultText={brandName}
@@ -76,7 +76,7 @@ export function FooterVariant5({
               />
             </div>
             <p className="max-w-[70%] text-sm text-muted-foreground">
-              <Editable
+              <Editable stableId="FooterVariant5-3"
                 id={`${id}-description`}
                 as="span"
                 defaultText={description}
@@ -111,7 +111,7 @@ export function FooterVariant5({
         </div>
         <div className="mt-8 flex flex-col justify-between gap-4 border-t border-border py-8 text-xs font-medium text-muted-foreground md:flex-row md:items-center md:text-left">
           <p className="order-2 lg:order-1">
-            <Editable
+            <Editable stableId="FooterVariant5-4"
               id={`${id}-copyright`}
               as="span"
               defaultText={copyrightText}

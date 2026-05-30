@@ -38,6 +38,25 @@ export async function checkAndBootstrapDb() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS payments (
+        uid VARCHAR(255) PRIMARY KEY,
+        has_paid BOOLEAN DEFAULT false,
+        amount_paid INT,
+        reference VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS leads (
+        id SERIAL PRIMARY KEY,
+        slug VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
     return { connected: true };
   } catch (err: any) {
     console.error("Neon database bootstrap error:", err);

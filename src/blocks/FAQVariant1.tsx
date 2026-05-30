@@ -32,7 +32,7 @@ export function FAQVariant1({
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <EditableSection className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
+    <EditableSection stableId="FAQVariant1-1" className="w-full py-16 md:py-24 lg:py-32 bg-background text-foreground font-sans">
       <div className="max-w-3xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -41,13 +41,13 @@ export function FAQVariant1({
           transition={{ type: "spring", stiffness: 220, damping: 28 }}
           className="flex flex-col items-center text-center space-y-3 mb-16"
         >
-          <Editable
+          <Editable stableId="FAQVariant1-2"
             as="h2"
             defaultText={headline}
             propName="headline"
             className="text-4xl font-bold tracking-tighter sm:text-5xl text-foreground"
           />
-          <Editable
+          <Editable stableId="FAQVariant1-3"
             as="p"
             defaultText={subtext}
             propName="subtext"
@@ -74,7 +74,7 @@ export function FAQVariant1({
                         e.stopPropagation();
                     }
                 }} className="w-full">
-                  <Editable
+                  <Editable stableId="FAQVariant1-4"
                     as="span"
                     defaultText={faq.question}
                     propName={`faqs[${i}].question`}
@@ -101,7 +101,7 @@ export function FAQVariant1({
                     transition={{ type: "spring", stiffness: 220, damping: 28 }}
                     className="overflow-hidden"
                   >
-                    <Editable
+                    <Editable stableId="FAQVariant1-5"
                       as="p"
                       defaultText={faq.answer}
                       propName={`faqs[${i}].answer`}

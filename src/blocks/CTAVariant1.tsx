@@ -23,7 +23,7 @@ export function CTAVariant1({
   secondaryCtaHref = "#",
 }: CTAVariant1Props) {
   return (
-    <EditableSection className="w-full py-24 md:py-32 bg-background font-sans">
+    <EditableSection stableId="CTAVariant1-1" className="w-full py-24 md:py-32 bg-background font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -38,13 +38,13 @@ export function CTAVariant1({
           </div>
 
           <div className="relative z-10 space-y-4 max-w-2xl">
-            <Editable
+            <Editable stableId="CTAVariant1-2"
               as="h2"
               defaultText={headline}
               propName="headline"
               className="text-4xl font-medium tracking-tighter sm:text-5xl md:text-6xl text-foreground"
             />
-            <Editable
+            <Editable stableId="CTAVariant1-3"
               as="p"
               defaultText={subtext}
               propName="subtext"
@@ -53,24 +53,24 @@ export function CTAVariant1({
           </div>
 
           <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4">
-            <EditableButton
+            <EditableButton stableId="CTAVariant1-4"
               as={motion.a}
               href={primaryCtaHref}
               whileHover={{ scale: 0.98 }}
               whileTap={{ scale: 0.96 }}
               className="group flex w-full sm:w-auto justify-center items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-medium tracking-tight text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
             >
-              <Editable as="span" defaultText={primaryCtaText} propName="primaryCtaText" inline />
+              <Editable stableId="CTAVariant1-5" as="span" defaultText={primaryCtaText} propName="primaryCtaText" inline />
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </EditableButton>
-            <EditableButton
+            <EditableButton stableId="CTAVariant1-6"
               as={motion.a}
               href={secondaryCtaHref}
               whileHover={{ scale: 0.98 }}
               whileTap={{ scale: 0.96 }}
               className="flex w-full sm:w-auto justify-center items-center gap-2 rounded-full border border-border bg-secondary px-8 py-3.5 text-sm font-medium tracking-tight text-secondary-foreground transition-colors hover:bg-secondary/80 cursor-pointer"
             >
-              <Editable as="span" defaultText={secondaryCtaText} propName="secondaryCtaText" inline />
+              <Editable stableId="CTAVariant1-7" as="span" defaultText={secondaryCtaText} propName="secondaryCtaText" inline />
             </EditableButton>
           </div>
         </motion.div>
